@@ -103,12 +103,12 @@ I (849) USB_NCM: WiFi STA connected
 ```
 
 
-## windows
+## settings in windows
 
 1. Connect PC via USB
 2. Open Device Manager
 3. Other devices > unknown device
-4. right click > Properties
+4. Right click > Properties
 5. Update Drivers
 6. Browse my computer for drivers
 <!-- 7. C:\Windows\System32\DriverStore\FileRepository\usbncm.inf_amd64_9957a38c3d2283ed -->
