@@ -100,7 +100,7 @@ static esp_err_t start_wifi(bool *is_connected)
     return esp_wifi_connect();
 }
 
-void app_main(void)
+void setApp(void)
 {
     initLed();
     static bool s_is_wifi_connected = false;    // needs to be static as it's used after we exit app_main()
@@ -154,7 +154,7 @@ static void buttonAction2(){
     ESP_LOGI(TAG, "double clicked!");
 }
 
-void setApp(){
+void setApp2(){
     // write initialize for app
     char * color = getSettingByKey("color");
     setButtonColor(color);
