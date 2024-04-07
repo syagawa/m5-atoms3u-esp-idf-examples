@@ -33,7 +33,7 @@
 
 #include "led.h"
 
-static const char *TAG = "USB_NCM";
+// static const char *TAG = "USB_NCM";
 
 static esp_err_t usb_recv_callback(void *buffer, uint16_t len, void *ctx)
 {
