@@ -1,3 +1,6 @@
+#ifndef LED_H
+#define LED_H
+
 #include "led_strip.h"
 
 #define BLINK_GPIO 35
@@ -98,3 +101,4 @@ static void initLed(void)
     /* Set all LED off to clear all pixels */
     led_strip_clear(led_strip);
 }
+#endif // LED_H
