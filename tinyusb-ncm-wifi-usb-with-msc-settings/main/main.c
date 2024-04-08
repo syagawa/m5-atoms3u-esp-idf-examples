@@ -36,7 +36,6 @@
 #include "app.h"
 
 
-
 void firstWait(int sec){
 
   int delayMS = 10;

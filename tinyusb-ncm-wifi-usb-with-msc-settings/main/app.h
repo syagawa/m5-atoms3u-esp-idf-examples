@@ -4,34 +4,15 @@
 #include "storage.h"
 #include "button.h"
 
-
-/*
- * SPDX-FileCopyrightText: 2023 Espressif Systems (Shanghai) CO LTD
- *
- * SPDX-License-Identifier: Unlicense OR CC0-1.0
- */
-
-/* DESCRIPTION:
- * This example demonstrates using ESP32-S2/S3 as a USB network device. It initializes WiFi in station mode,
- * connects and bridges the WiFi and USB networks, so the USB device acts as a standard network interface that
- * acquires an IP address from the AP/router which the WiFi station connects to.
- */
-
-#include <stdio.h>
-
-#include "esp_log.h"
 #include "esp_event.h"
-#include "esp_check.h"
 #include "nvs_flash.h"
 #include "esp_mac.h"
 
 #include "esp_wifi.h"
 #include "esp_private/wifi.h"
 
-#include "tinyusb.h"
 #include "tinyusb_net.h"
 
-#include "led.h"
 
 // static const char *TAG = "USB_NCM";
 
@@ -91,8 +72,8 @@ static esp_err_t start_wifi(bool *is_connected)
 
     wifi_config_t wifi_config = {
         .sta = {
-            .ssid = CONFIG_ESP_WIFI_SSID,
-            .password = CONFIG_ESP_WIFI_PASSWORD,
+            .ssid = "sample_ssid",
+            .password = "sample_passwd",
         },
     };
 
@@ -102,7 +83,7 @@ static esp_err_t start_wifi(bool *is_connected)
 
 void setApp(void)
 {
-    initLed();
+    // initLed();
     static bool s_is_wifi_connected = false;    // needs to be static as it's used after we exit app_main()
 
     /* Initialize NVS — it is used to store PHY calibration data */
@@ -138,7 +119,6 @@ void setApp(void)
 err:
     ESP_LOGE(TAG, "USB-WiFi bridge example failed!");
 }
-
 
 
 static void buttonAction1(){
