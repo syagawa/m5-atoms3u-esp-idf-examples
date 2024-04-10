@@ -17,13 +17,17 @@
 
 #define BASE_PATH "/usb" // base path to mount the partition
 
-static const char *TAG = "example_main";
+static const char *TAG = "tusb-msc-settings";
 static uint8_t buf[CONFIG_TINYUSB_CDC_RX_BUFSIZE + 1];
 
 static char * InitialDataStr = "{\"settings_mode\": \"storage\"}";
 
 const char *directory = "/usb/esp";
 const char *file_path = "/usb/esp/settings.txt";
+
+static const char * idVersionStr = "tinyusb-ncm-wifi-usb-with-msc-settings-1.0.0";
+const char *file_path_version = "/usb/esp/version.txt";
+
 
 void tinyusb_cdc_rx_callback(int itf, cdcacm_event_t *event)
 {
@@ -72,9 +76,12 @@ static esp_err_t storage_init_spiflash(wl_handle_t *wl_handle)
 }
 
 
+static void removeFiles(void){
+    remove(file_path);
+    remove(file_path_version);
+}
+
 static void resetStorage(void) {
-    const char *directory = "/usb/esp";
-    const char *file_path = "/usb/esp/test.txt";
 
     struct stat s = {0};
     bool directory_exists = stat(directory, &s) == 0;
@@ -85,26 +92,28 @@ static void resetStorage(void) {
         }
     }
 
-     if (!file_exists(file_path)) {
-        ESP_LOGI(TAG, "Creating file");
-        FILE *f = fopen(file_path, "w");
-        if (f == NULL) {
-            ESP_LOGE(TAG, "Failed to open file for writing");
-            return;
-        }
-        // fprintf(f, "Hello World!\n");
-        fprintf(f, InitialDataStr);
-        fclose(f);
-    }
+    removeFiles();
 
-    FILE *f = fopen(file_path, "w");
-    if (f == NULL) {
+    ESP_LOGI(TAG, "Creating file");
+    FILE *f1 = fopen(file_path, "w");
+    if (f1 == NULL) {
         ESP_LOGE(TAG, "Failed to open file for writing");
         return;
     }
     // fprintf(f, "Hello World!\n");
-    fprintf(f, InitialDataStr);
-    fclose(f);
+    fprintf(f1, InitialDataStr);
+    fclose(f1);
+    
+    ESP_LOGI(TAG, "Creating file");
+    FILE *f2 = fopen(file_path_version, "w");
+    if (f2 == NULL) {
+        ESP_LOGE(TAG, "Failed to open file for writing");
+        // return "error1";
+    }
+    // fprintf(f, "Hello World!\n");
+    fprintf(f2, idVersionStr);
+    fclose(f2);
+
 }
 
 
@@ -138,6 +147,18 @@ void initSettings(){
         fprintf(f, InitialDataStr);
         fclose(f);
     }
+    if (!file_exists(file_path_version)) {
+        ESP_LOGI(TAG, "Creating file");
+        FILE *f = fopen(file_path_version, "w");
+        if (f == NULL) {
+            ESP_LOGE(TAG, "Failed to open file for writing");
+            // return "error1";
+        }
+        // fprintf(f, "Hello World!\n");
+        fprintf(f, idVersionStr);
+        fclose(f);
+    }
+
 }
 
 cJSON * getSettings(){
