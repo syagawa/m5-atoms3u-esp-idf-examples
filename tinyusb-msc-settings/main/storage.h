@@ -83,8 +83,8 @@ static void removeFiles(void){
     remove(file_path);
 }
 
-// can not reset storage
-static void resetStorage(void) {
+// can not reset settings
+static void resetSettings(void) {
 
     tusb_cdc_acm_deinit(1);
 
