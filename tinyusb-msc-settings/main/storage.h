@@ -77,6 +77,8 @@ static esp_err_t storage_init_spiflash(wl_handle_t *wl_handle)
 
 
 static void removeFiles(void){
+    fclose(file_path);
+    fclose(file_path_version);
     remove(file_path);
     remove(file_path_version);
 }
