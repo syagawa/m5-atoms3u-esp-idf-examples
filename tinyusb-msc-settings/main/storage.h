@@ -20,8 +20,6 @@
 static const char *TAG = "tusb-msc-settings";
 static uint8_t buf[CONFIG_TINYUSB_CDC_RX_BUFSIZE + 1];
 
-static char * InitialDataStr = "{\"settings_mode\": \"storage\"}";
-
 const char *directory = "/usb/esp";
 const char *file_path = "/usb/esp/settings.txt";
 
@@ -84,7 +82,7 @@ static void removeFiles(void){
 }
 
 // can not reset settings
-static void resetSettings(void) {
+static void resetSettings(char * initialDataStr) {
 
     tusb_cdc_acm_deinit(1);
 
@@ -107,13 +105,12 @@ static void resetSettings(void) {
         // return;
     }
     // fprintf(f, "Hello World!\n");
-    fprintf(f1, InitialDataStr);
+    fprintf(f1, initialDataStr);
     fclose(f1);
 
 }
 
-
-void initSettings(char * version){
+void initSettings(char * version, char * initialDataStr){
 
     wl_handle_t wl_handle = WL_INVALID_HANDLE;
     ESP_ERROR_CHECK(storage_init_spiflash(&wl_handle));
@@ -138,7 +135,7 @@ void initSettings(char * version){
         if (f == NULL) {
             ESP_LOGE(TAG, "Failed to open file for writing");
         }
-        fprintf(f, InitialDataStr);
+        fprintf(f, initialDataStr);
         fclose(f);
     }
 
