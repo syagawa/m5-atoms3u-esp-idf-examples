@@ -36,6 +36,7 @@
 #include "app.h"
 
 
+
 void firstWait(int sec){
 
   int delayMS = 10;
@@ -82,7 +83,7 @@ void app_main(void){
 
     initButton();
     initLed();
-    initSettings();
+    initSettings(versionStr, initialDataStr);
 
     firstWait(3);
     ESP_LOGI(TAG, "bootmode %d", getBootMode());

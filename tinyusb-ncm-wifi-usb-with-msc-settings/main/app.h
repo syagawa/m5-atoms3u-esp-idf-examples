@@ -13,8 +13,8 @@
 
 #include "tinyusb_net.h"
 
-
-// static const char *TAG = "USB_NCM";
+const char * initialDataStr = "{\"settings_mode\": \"storage\", \"ssid\": \"ssid11\", \"ps\": \"ps11\"}";
+const char *  versionStr = "tinyusb-ncm-wifi-usb-with-msc-settings-1.0.1";
 
 static esp_err_t usb_recv_callback(void *buffer, uint16_t len, void *ctx)
 {
@@ -59,8 +59,7 @@ static void wifi_event_handler(void *arg, esp_event_base_t event_base,
     }
 }
 
-static esp_err_t start_wifi(bool *is_connected)
-{
+static esp_err_t start_wifi(bool *is_connected, char *ssid, char *ps){
     ESP_RETURN_ON_ERROR(esp_event_loop_create_default(), TAG, "Cannot initialize event loop");
 
     wifi_init_config_t wifi_cfg = WIFI_INIT_CONFIG_DEFAULT();
@@ -70,20 +69,82 @@ static esp_err_t start_wifi(bool *is_connected)
     ESP_RETURN_ON_ERROR(esp_wifi_set_mode(WIFI_MODE_STA), TAG, "Failed to set WiFi station mode");
     ESP_RETURN_ON_ERROR(esp_wifi_start(), TAG, "Failed to start WiFi library");
 
-    wifi_config_t wifi_config = {
-        .sta = {
-            .ssid = "sample_ssid",
-            .password = "sample_passwd",
-        },
-    };
+    // unsigned char * u_ssid = (unsigned char*)ssid;
+    // unsigned char * u_ps = (unsigned char*)ps;
+
+    // unsigned char * u_ssid2 = (unsigned char*)"ssid";
+    // unsigned char * u_ps2 = (unsigned char*)"ps";
+
+    // uint8_t *ut_ssid = (uint8_t *)ssid;
+    // uint8_t *ut_ps = (uint8_t *)ps;
+
+
+    int len_ssid = strlen(ssid);
+    char array_ssid[len_ssid + 1];
+    strcpy(array_ssid, ssid);
+
+    int len_ps = strlen(ps);
+    char array_ps[len_ps + 1];
+    strcpy(array_ps, ps);
+
+    char * a = "aaa";
+    char * b = "bbb";
+
+    // wifi_config_t wifi_config = {
+    //     .sta = {
+    //         .ssid = a,
+    //         .password = b,
+    //     },
+    // };
+
+
+    wifi_config_t wifi_config = {0};  // 全てのメンバをゼロで初期化
+
+    // SSIDとパスワードを配列にコピー
+    strncpy((char *)wifi_config.sta.ssid, ssid, sizeof(wifi_config.sta.ssid));
+    wifi_config.sta.ssid[sizeof(wifi_config.sta.ssid) - 1] = 0;  // 念の為のヌル終端
+
+    strncpy((char *)wifi_config.sta.password, ps, sizeof(wifi_config.sta.password));
+    wifi_config.sta.password[sizeof(wifi_config.sta.password) - 1] = 0;
+
+
 
     ESP_RETURN_ON_ERROR(esp_wifi_set_config(WIFI_IF_STA, &wifi_config), TAG, "Failed to set WiFi config");
     return esp_wifi_connect();
 }
 
+
+static void buttonAction1(){
+  char * color = getButtonColor();
+  showColorWithBrightness(color, brightness_test);
+  brightness_test = brightness_test - 0.1;
+  if(brightness_test < 0){
+    brightness_test = 1.0;
+  }
+}
+
+static void buttonAction2(){
+  ESP_LOGI(TAG, "double clicked!");
+}
+
+static void buttonAction3(){
+  ESP_LOGI(TAG, "long pressed!");
+}
+
 void setApp(void)
 {
-    // initLed();
+
+    char * color = getSettingByKey("color");
+    setButtonColor(color);
+    ESP_LOGI(TAG, "Color: %s!", color);
+
+    singleClickAction = buttonAction1;
+    doubleClickAction = buttonAction2;
+    longPressedAction = buttonAction3;
+
+    char * ssid = getSettingByKey("ssid");
+    char * ps = getSettingByKey("ps");
+
     static bool s_is_wifi_connected = false;    // needs to be static as it's used after we exit app_main()
 
     /* Initialize NVS — it is used to store PHY calibration data */
@@ -111,7 +172,7 @@ void setApp(void)
     ESP_GOTO_ON_ERROR(tinyusb_net_init(TINYUSB_USBDEV_0, &net_config), err, TAG, "Failed to initialize TinyUSB NCM device class");
 
     ESP_LOGI(TAG, "WiFi initialization");
-    ESP_GOTO_ON_ERROR(start_wifi(&s_is_wifi_connected), err, TAG, "Failed to init and start WiFi");
+    ESP_GOTO_ON_ERROR(start_wifi(&s_is_wifi_connected, ssid, ps), err, TAG, "Failed to init and start WiFi");
 
     ESP_LOGI(TAG, "USB NCM and WiFi initialized and started");
     return;
@@ -121,28 +182,6 @@ err:
 }
 
 
-static void buttonAction1(){
-  char * color = getButtonColor();
-  showColorWithBrightness(color, brightness_test);
-  brightness_test = brightness_test - 0.1;
-  if(brightness_test < 0){
-    brightness_test = 1.0;
-  }
-}
-
-static void buttonAction2(){
-    ESP_LOGI(TAG, "double clicked!");
-}
-
-void setApp2(){
-    // write initialize for app
-    char * color = getSettingByKey("color");
-    setButtonColor(color);
-    ESP_LOGI(TAG, "Color: %s!", color);
-
-    singleClickAction = buttonAction1;
-    doubleClickAction = buttonAction2;
-}
 
 void appInLoop(){
     // write logic in loop

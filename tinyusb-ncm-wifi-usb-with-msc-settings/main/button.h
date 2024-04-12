@@ -9,8 +9,6 @@ int bootmode = 0;// 0 Main Mode
 int pushedBtnLong = 0;
 int waitedMS = 0;
 int buttonLongPressInited = 0;
-int double_click_count = 0;
-int double_click_count_num = 2;
 int completedFirstWait = 0;
 
 float brightness_test = 1.0;
@@ -20,7 +18,7 @@ char * buttonColor = "";
 
 void (*singleClickAction)(void);
 void (*doubleClickAction)(void);
-void (*longPressedkAction)(void);
+void (*longPressedAction)(void);
 
 
 static void setButtonLongPressInited(){
@@ -90,29 +88,24 @@ static void button_long_press_cb(void *arg,void *usr_data){
     if(buttonLongPressInited == 0){
       pushedBtnLong = 1;
     }
-    if(isBootModeMain() && completedFirstWait == 1 && longPressedkAction != NULL){
-      longPressedkAction();
+    if(isBootModeMain() && completedFirstWait == 1 && longPressedAction != NULL){
+      longPressedAction();
     }
 }
 
 static void button_double_click_cb(void *arg,void *usr_data){
 
-    int a = iot_button_get_repeat((button_handle_t)arg);
-    ESP_LOGI(TAG, "Click count: %d", a);
+    int num = iot_button_get_repeat((button_handle_t)arg);
+    ESP_LOGI(TAG, "Click count: %d", num);
 
-    if(double_click_count < double_click_count_num){
-      double_click_count++;
-    }
-    if(double_click_count == double_click_count_num){
+    if(num == 2){
       if(bootmode == 1){
-        resetStorage();
         esp_restart();
       }
       if(isBootModeMain() && completedFirstWait == 1 && doubleClickAction != NULL){
         doubleClickAction();
       }
 
-      double_click_count = 0;
     }
 }
 

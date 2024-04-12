@@ -17,13 +17,17 @@
 
 #define BASE_PATH "/usb" // base path to mount the partition
 
-static const char *TAG = "example_main";
+static const char *TAG = "tusb-msc-settings";
 static uint8_t buf[CONFIG_TINYUSB_CDC_RX_BUFSIZE + 1];
-
-static char * InitialDataStr = "{\"settings_mode\": \"storage\"}";
 
 const char *directory = "/usb/esp";
 const char *file_path = "/usb/esp/settings.txt";
+
+const char *file_path_version = "/usb/esp/version.txt";
+
+static const char * readmeStr = "Reset Settings: Delete settings.txt and remove this USB from PC.";
+const char *file_path_readme = "/usb/esp/readme.txt";
+
 
 void tinyusb_cdc_rx_callback(int itf, cdcacm_event_t *event)
 {
@@ -72,9 +76,15 @@ static esp_err_t storage_init_spiflash(wl_handle_t *wl_handle)
 }
 
 
-static void resetStorage(void) {
-    const char *directory = "/usb/esp";
-    const char *file_path = "/usb/esp/test.txt";
+static void removeFiles(void){
+    fclose(file_path);
+    remove(file_path);
+}
+
+// can not reset settings
+static void resetSettings(char * initialDataStr) {
+
+    tusb_cdc_acm_deinit(1);
 
     struct stat s = {0};
     bool directory_exists = stat(directory, &s) == 0;
@@ -85,30 +95,22 @@ static void resetStorage(void) {
         }
     }
 
-     if (!file_exists(file_path)) {
-        ESP_LOGI(TAG, "Creating file");
-        FILE *f = fopen(file_path, "w");
-        if (f == NULL) {
-            ESP_LOGE(TAG, "Failed to open file for writing");
-            return;
-        }
-        // fprintf(f, "Hello World!\n");
-        fprintf(f, InitialDataStr);
-        fclose(f);
-    }
+    
+    removeFiles();
 
-    FILE *f = fopen(file_path, "w");
-    if (f == NULL) {
+    ESP_LOGI(TAG, "Creating file");
+    FILE *f1 = fopen(file_path, "w");
+    if (f1 == NULL) {
         ESP_LOGE(TAG, "Failed to open file for writing");
-        return;
+        // return;
     }
     // fprintf(f, "Hello World!\n");
-    fprintf(f, InitialDataStr);
-    fclose(f);
+    fprintf(f1, initialDataStr);
+    fclose(f1);
+
 }
 
-
-void initSettings(){
+void initSettings(char * version, char * initialDataStr){
 
     wl_handle_t wl_handle = WL_INVALID_HANDLE;
     ESP_ERROR_CHECK(storage_init_spiflash(&wl_handle));
@@ -132,12 +134,24 @@ void initSettings(){
         FILE *f = fopen(file_path, "w");
         if (f == NULL) {
             ESP_LOGE(TAG, "Failed to open file for writing");
-            // return "error1";
         }
-        // fprintf(f, "Hello World!\n");
-        fprintf(f, InitialDataStr);
+        fprintf(f, initialDataStr);
         fclose(f);
     }
+
+    FILE *f1 = fopen(file_path_version, "w");
+    if (f1 == NULL) {
+        ESP_LOGE(TAG, "Failed to open file for writing");
+    }
+    fprintf(f1, version);
+    fclose(f1);
+
+    FILE *f2 = fopen(file_path_readme, "w");
+    if (f2 == NULL) {
+        ESP_LOGE(TAG, "Failed to open file for writing");
+    }
+    fprintf(f2, readmeStr);
+    fclose(f2);
 }
 
 cJSON * getSettings(){
@@ -146,7 +160,6 @@ cJSON * getSettings(){
     f = fopen(file_path, "r");
     if (f == NULL) {
         ESP_LOGE(TAG, "Failed to open file for reading");
-        // return "error2";
     }
     char line[64];
     fgets(line, sizeof(line), f);
@@ -203,59 +216,6 @@ char * getSettingByKey(char * targetkey){
 
 void startSettingsMode(){
 
-    // wl_handle_t wl_handle = WL_INVALID_HANDLE;
-    // ESP_ERROR_CHECK(storage_init_spiflash(&wl_handle));
-
-    // const tinyusb_msc_spiflash_config_t config_spi = {
-    //     .wl_handle = wl_handle
-    // };
-    // ESP_ERROR_CHECK(tinyusb_msc_storage_init_spiflash(&config_spi));
-    // ESP_ERROR_CHECK(tinyusb_msc_storage_mount(BASE_PATH));
-
-    // struct stat s = {0};
-    // bool directory_exists = stat(directory, &s) == 0;
-    // if (!directory_exists) {
-    //     if (mkdir(directory, 0775) != 0) {
-    //         ESP_LOGE(TAG, "mkdir failed with errno: %s", strerror(errno));
-    //     }
-    // }
-
-    // if (!file_exists(file_path)) {
-    //     ESP_LOGI(TAG, "Creating file");
-    //     FILE *f = fopen(file_path, "w");
-    //     if (f == NULL) {
-    //         ESP_LOGE(TAG, "Failed to open file for writing");
-    //         // return "error1";
-    //     }
-    //     // fprintf(f, "Hello World!\n");
-    //     fprintf(f, InitialDataStr);
-    //     fclose(f);
-    // }
-
-    // FILE *f;
-    // ESP_LOGI(TAG, "Reading file");
-    // f = fopen(file_path, "r");
-    // if (f == NULL) {
-    //     ESP_LOGE(TAG, "Failed to open file for reading");
-    //     // return "error2";
-    // }
-    // char line[64];
-    // fgets(line, sizeof(line), f);
-    // fclose(f);
-    // // strip newline
-    // char *pos = strchr(line, '\n');
-    // if (pos) {
-    //     *pos = '\0';
-    // }
-    // ESP_LOGI(TAG, "Read from file: '%s'", line);
-
-    // char * str = strdup(line);
-    // // strdupを使用している場合、必要に応じてfree(str);を呼び出してメモリを解放する必要があります
-
-    // ESP_LOGI(TAG, "json_str '%s'", str);
-    // cJSON * obj = cJSON_Parse(str);
-    // free(str);
-
     cJSON * obj = getSettings();
 
     char * settings_mode = "storage";//stprage, web
@@ -305,7 +265,6 @@ void startSettingsMode(){
           .callback_line_state_changed = NULL,
           .callback_line_coding_changed = NULL
       };
-
       ESP_ERROR_CHECK(tusb_cdc_acm_init(&acm_cfg));
       /* the second way to register a callback */
       ESP_ERROR_CHECK(tinyusb_cdcacm_register_callback(
