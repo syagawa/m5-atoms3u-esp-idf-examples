@@ -83,7 +83,7 @@ void app_main(void){
 
     initButton();
     initLed();
-    initSettings(versionStr);
+    initSettings(versionStr, initialDataStr);
 
     firstWait(3);
     ESP_LOGI(TAG, "bootmode %d", getBootMode());

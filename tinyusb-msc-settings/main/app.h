@@ -5,7 +5,8 @@
 #include "button.h"
 
 
-const char *  versionStr = "tinyusb-msc-settings-1.2.0";
+const char * initialDataStr = "{\"settings_mode\": \"storage\", \"color\": \"red\"}";
+const char * versionStr = "tinyusb-msc-settings-1.2.0";
 
 static void buttonAction1(){
   char * color = getButtonColor();
