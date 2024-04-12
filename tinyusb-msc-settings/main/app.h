@@ -5,7 +5,7 @@
 #include "button.h"
 
 
-const char *  versionStr = "tinyusb-ncm-wifi-usb-with-msc-settings-1.1.0";
+const char *  versionStr = "tinyusb-ncm-wifi-usb-with-msc-settings-1.2.0";
 
 static void buttonAction1(){
   char * color = getButtonColor();
@@ -17,7 +17,11 @@ static void buttonAction1(){
 }
 
 static void buttonAction2(){
-    ESP_LOGI(TAG, "double clicked!");
+  ESP_LOGI(TAG, "double clicked!");
+}
+
+static void buttonAction3(){
+  ESP_LOGI(TAG, "long pressed!");
 }
 
 void setApp(){
@@ -28,6 +32,7 @@ void setApp(){
 
     singleClickAction = buttonAction1;
     doubleClickAction = buttonAction2;
+    longPressedAction = buttonAction3;
 }
 
 void appInLoop(){

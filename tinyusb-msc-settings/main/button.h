@@ -18,7 +18,7 @@ char * buttonColor = "";
 
 void (*singleClickAction)(void);
 void (*doubleClickAction)(void);
-void (*longPressedkAction)(void);
+void (*longPressedAction)(void);
 
 
 static void setButtonLongPressInited(){
@@ -88,8 +88,8 @@ static void button_long_press_cb(void *arg,void *usr_data){
     if(buttonLongPressInited == 0){
       pushedBtnLong = 1;
     }
-    if(isBootModeMain() && completedFirstWait == 1 && longPressedkAction != NULL){
-      longPressedkAction();
+    if(isBootModeMain() && completedFirstWait == 1 && longPressedAction != NULL){
+      longPressedAction();
     }
 }
 
