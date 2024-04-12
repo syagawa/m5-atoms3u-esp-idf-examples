@@ -5,7 +5,7 @@
 #include "button.h"
 
 
-const char *  versionStr = "tinyusb-ncm-wifi-usb-with-msc-settings-1.2.0";
+const char *  versionStr = "tinyusb-msc-settings-1.2.0";
 
 static void buttonAction1(){
   char * color = getButtonColor();
