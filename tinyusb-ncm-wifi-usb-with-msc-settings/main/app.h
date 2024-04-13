@@ -69,16 +69,6 @@ static esp_err_t start_wifi(bool *is_connected, char *ssid, char *ps){
     ESP_RETURN_ON_ERROR(esp_wifi_set_mode(WIFI_MODE_STA), TAG, "Failed to set WiFi station mode");
     ESP_RETURN_ON_ERROR(esp_wifi_start(), TAG, "Failed to start WiFi library");
 
-    // unsigned char * u_ssid = (unsigned char*)ssid;
-    // unsigned char * u_ps = (unsigned char*)ps;
-
-    // unsigned char * u_ssid2 = (unsigned char*)"ssid";
-    // unsigned char * u_ps2 = (unsigned char*)"ps";
-
-    // uint8_t *ut_ssid = (uint8_t *)ssid;
-    // uint8_t *ut_ps = (uint8_t *)ps;
-
-
     int len_ssid = strlen(ssid);
     char array_ssid[len_ssid + 1];
     strcpy(array_ssid, ssid);
@@ -86,9 +76,6 @@ static esp_err_t start_wifi(bool *is_connected, char *ssid, char *ps){
     int len_ps = strlen(ps);
     char array_ps[len_ps + 1];
     strcpy(array_ps, ps);
-
-    char * a = "aaa";
-    char * b = "bbb";
 
     // wifi_config_t wifi_config = {
     //     .sta = {
@@ -131,7 +118,7 @@ static void buttonAction3(){
   ESP_LOGI(TAG, "long pressed!");
 }
 
-void setApp(void)
+void setApp()
 {
 
     char * color = getSettingByKey("color");

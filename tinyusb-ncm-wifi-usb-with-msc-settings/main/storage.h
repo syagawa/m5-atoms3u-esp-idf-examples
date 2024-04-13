@@ -246,7 +246,7 @@ void startSettingsMode(){
     if(strcmp("storage", settings_mode) == 0){
       showColorWithBrightness("YELLOW", 0.1);
 
-      ESP_LOGI(TAG, "USB Composite initialization");
+      ESP_LOGI(TAG, "USB Composite initialization0");
       const tinyusb_config_t tusb_cfg = {
           .device_descriptor = NULL,
           .string_descriptor = NULL,
@@ -254,7 +254,9 @@ void startSettingsMode(){
           .external_phy = false,
           .configuration_descriptor = NULL,
       };
+      ESP_LOGI(TAG, "USB Composite initialization1");
       ESP_ERROR_CHECK(tinyusb_driver_install(&tusb_cfg));
+      ESP_LOGI(TAG, "USB Composite initialization2");
 
       tinyusb_config_cdcacm_t acm_cfg = {
           .usb_dev = TINYUSB_USBDEV_0,
