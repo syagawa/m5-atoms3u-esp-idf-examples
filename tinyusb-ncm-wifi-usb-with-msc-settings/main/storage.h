@@ -247,15 +247,42 @@ void startSettingsMode(){
       showColorWithBrightness("YELLOW", 0.1);
 
       ESP_LOGI(TAG, "USB Composite initialization0");
+
+      static const tusb_desc_device_t device_desc = {
+        .bLength = sizeof(tusb_desc_device_t),
+        .bDescriptorType = TUSB_DESC_DEVICE,
+        .bcdUSB = 0x0200,
+        .bDeviceClass = 239,
+        .bDeviceSubClass = 2,
+        .bDeviceProtocol = 1,
+        .bMaxPacketSize0 = 64,
+        .idVendor = 0x303a,  // ベンダーID
+        .idProduct = 0x4001, // 製品ID
+        .bcdDevice = 0x0100,
+        .iManufacturer = 0x1,
+        .iProduct = 0x2,
+        .iSerialNumber = 0x3,
+        .bNumConfigurations = 0x1
+    };
+
+
       const tinyusb_config_t tusb_cfg = {
-          .device_descriptor = NULL,
+          .device_descriptor = &device_desc,
           .string_descriptor = NULL,
           .string_descriptor_count = 0,
           .external_phy = false,
           .configuration_descriptor = NULL,
       };
       ESP_LOGI(TAG, "USB Composite initialization1");
-      ESP_ERROR_CHECK(tinyusb_driver_install(&tusb_cfg));
+    //   ESP_ERROR_CHECK(tinyusb_driver_install(&tusb_cfg));
+      esp_err_t ret = tinyusb_driver_install(&tusb_cfg);
+      ESP_LOGI(TAG, "Result of TinyUSB driver installation: %d (%s)", ret, esp_err_to_name(ret));
+      if(ret != ESP_OK){
+        ESP_LOGE(TAG, "Failed to install TinyUSB driver: %s", esp_err_to_name(ret));
+      }else{
+         ESP_LOGI(TAG, "TinyUSB driver installed successfully");
+      }
+
       ESP_LOGI(TAG, "USB Composite initialization2");
 
       tinyusb_config_cdcacm_t acm_cfg = {
