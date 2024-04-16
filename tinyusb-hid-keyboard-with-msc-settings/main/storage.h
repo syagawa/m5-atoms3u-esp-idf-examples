@@ -17,7 +17,7 @@
 
 #define BASE_PATH "/usb" // base path to mount the partition
 
-static const char *TAG = "tusb-msc-settings";
+static const char *TAG = "tusb-hid-keyboard-msc-settings";
 static uint8_t buf[CONFIG_TINYUSB_CDC_RX_BUFSIZE + 1];
 
 const char *directory = "/usb/esp";
@@ -254,7 +254,9 @@ void startSettingsMode(){
           .external_phy = false,
           .configuration_descriptor = NULL,
       };
+      ESP_LOGI(TAG, "USB Composite initialization1");
       ESP_ERROR_CHECK(tinyusb_driver_install(&tusb_cfg));
+      ESP_LOGI(TAG, "USB Composite initialization2");
 
       tinyusb_config_cdcacm_t acm_cfg = {
           .usb_dev = TINYUSB_USBDEV_0,
@@ -266,6 +268,7 @@ void startSettingsMode(){
           .callback_line_coding_changed = NULL
       };
       ESP_ERROR_CHECK(tusb_cdc_acm_init(&acm_cfg));
+      ESP_LOGI(TAG, "USB Composite initialization3");
       /* the second way to register a callback */
       ESP_ERROR_CHECK(tinyusb_cdcacm_register_callback(
                           TINYUSB_CDC_ACM_0,
