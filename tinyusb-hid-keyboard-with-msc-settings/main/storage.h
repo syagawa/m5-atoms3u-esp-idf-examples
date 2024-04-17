@@ -258,6 +258,8 @@ void startSettingsMode(){
       ESP_ERROR_CHECK(tinyusb_driver_install(&tusb_cfg));
       ESP_LOGI(TAG, "USB Composite initialization2");
 
+      showColorWithBrightness("RED", 0.1);
+
       tinyusb_config_cdcacm_t acm_cfg = {
           .usb_dev = TINYUSB_USBDEV_0,
           .cdc_port = TINYUSB_CDC_ACM_0,
@@ -266,8 +268,10 @@ void startSettingsMode(){
           .callback_rx_wanted_char = NULL,
           .callback_line_state_changed = NULL,
           .callback_line_coding_changed = NULL
-      };
+      };miechan
       ESP_ERROR_CHECK(tusb_cdc_acm_init(&acm_cfg));
+      showColorWithBrightness("green", 0.1);
+
       ESP_LOGI(TAG, "USB Composite initialization3");
       /* the second way to register a callback */
       ESP_ERROR_CHECK(tinyusb_cdcacm_register_callback(
