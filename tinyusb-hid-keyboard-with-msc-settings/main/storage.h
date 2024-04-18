@@ -268,7 +268,7 @@ void startSettingsMode(){
           .callback_rx_wanted_char = NULL,
           .callback_line_state_changed = NULL,
           .callback_line_coding_changed = NULL
-      };miechan
+      };
       ESP_ERROR_CHECK(tusb_cdc_acm_init(&acm_cfg));
       showColorWithBrightness("green", 0.1);
 
