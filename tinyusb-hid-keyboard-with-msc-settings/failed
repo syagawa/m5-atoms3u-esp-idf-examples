@@ -1,0 +1,97 @@
+PS C:\Users\satoru\esp-idf-projects\m5-atoms3u-esp-idf-examples\tinyusb-hid-keyboard-with-msc-settings> set IDF_PATH=C:\Users\satoru\esp\esp-idf
+PS C:\Users\satoru\esp-idf-projects\m5-atoms3u-esp-idf-examples\tinyusb-hid-keyboard-with-msc-settings> C:\Users\satoru\.espressif\python_env\idf5.2_py3.11_env\Scripts\python.exe C:\Users\satoru\esp\esp-idf\tools\idf_monitor.py -p COM4 -b 115200 
+--toolchain-prefix xtensa-esp32s3-elf- --target esp32s3 c:\Users\satoru\esp-idf-projects\m5-atoms3u-esp-idf-examples\tinyusb-hid-keyboard-with-msc-settings\build\tusb_composite.elf
+--- WARNING: GDB cannot open serial ports accessed as COMx
+--- Using \\.\COM4 instead...
+--- esp-idf-monitor 1.3.4 on \\.\COM4 115200 ---
+--- Quit: Ctrl+] | Menu: Ctrl+T | Help: Ctrl+T followed by Ctrl+H ---
+ESP-ROM:esp32s3-20210327
+Build:Mar 27 2021
+rst:0x15 (USB_UART_CHIP_RESET),boot:0x28 (SPI_FAST_FLASH_BOOT)
+Saved PC:0x4037f417
+0x4037f417: spimem_flash_ll_set_read_mode at C:/Users/satoru/esp/esp-idf/components/hal/esp32s3/include/hal/spimem_flash_ll.h:430
+
+invalid header: 0xffffffff
+invalid header: 0xffffff7f
+invalid header: 0xffffffff
+invalid header: 0xffffffff
+invalid header: 0xffffffff
+SPIWP:0xee
+mode:DIO, clock div:1
+load:0x3fce3810,len:0x178c
+load:0x403c9700,len:0x4
+load:0x403c9704,len:0xcbc
+load:0x403cc700,len:0x2d90
+entry 0x403c9914
+I (39) boot: ESP-IDF v5.2-beta1-263-ge49823f10c 2nd stage bootloader
+I (39) boot: compile time Apr 16 2024 21:55:04
+I (40) boot: Multicore bootloader
+I (44) boot: chip revision: v0.1
+I (47) boot.esp32s3: Boot SPI Speed : 80MHz
+I (52) boot.esp32s3: SPI Mode       : DIO
+I (57) boot.esp32s3: SPI Flash Size : 4MB
+I (62) boot: Enabling RNG early entropy source...
+I (67) boot: Partition Table:
+I (71) boot: ## Label            Usage          Type ST Offset   Length
+I (78) boot:  0 nvs              WiFi data        01 02 00009000 00006000
+I (85) boot:  1 phy_init         RF data          01 01 0000f000 00001000
+I (93) boot:  2 factory          factory app      00 00 00010000 00100000
+I (100) boot:  3 storage          Unknown data     01 81 00110000 00100000
+I (108) boot: End of partition table
+I (112) esp_image: segment 0: paddr=00010020 vaddr=3c040020 size=10c78h ( 68728) map
+I (133) esp_image: segment 1: paddr=00020ca0 vaddr=3fc93b00 size=02b38h ( 11064) load
+I (136) esp_image: segment 2: paddr=000237e0 vaddr=40374000 size=0c838h ( 51256) load
+I (150) esp_image: segment 3: paddr=00030020 vaddr=42000020 size=36c00h (224256) map
+I (191) esp_image: segment 4: paddr=00066c28 vaddr=40380838 size=03248h ( 12872) load
+I (194) esp_image: segment 5: paddr=00069e78 vaddr=600fe010 size=00004h (     4) load
+I (203) boot: Loaded app from partition at offset 0x10000
+I (203) boot: Disabling RNG early entropy source...
+I (219) cpu_start: Multicore app
+I (229) cpu_start: Pro cpu start user code
+I (229) cpu_start: cpu freq: 160000000 Hz
+I (229) cpu_start: Application information:
+I (232) cpu_start: Project name:     tusb_composite
+I (238) cpu_start: App version:      ec76b2e-dirty
+I (243) cpu_start: Compile time:     Apr 16 2024 22:40:58
+I (249) cpu_start: ELF file SHA256:  45e19d283...
+I (255) cpu_start: ESP-IDF:          v5.2-beta1-263-ge49823f10c
+I (261) cpu_start: Min chip rev:     v0.0
+I (266) cpu_start: Max chip rev:     v0.99 
+I (271) cpu_start: Chip rev:         v0.1
+I (275) heap_init: Initializing. RAM available for dynamic allocation:
+I (283) heap_init: At 3FC97DE0 len 00051930 (326 KiB): RAM
+I (289) heap_init: At 3FCE9710 len 00005724 (21 KiB): RAM
+I (295) heap_init: At 3FCF0000 len 00008000 (32 KiB): DRAM
+I (301) heap_init: At 600FE014 len 00001FD4 (7 KiB): RTCRAM
+I (308) spi_flash: detected chip: gd
+I (311) spi_flash: flash io: dio
+W (315) spi_flash: Detected size(8192k) larger than the size in the binary image header(4096k). Using the size in the binary image header.
+I (329) sleep: Configure to isolate all GPIO pins in sleep state
+I (335) sleep: Enable automatic switching of GPIO sleep configuration
+I (343) main_task: Started on CPU0
+I (353) main_task: Calling app_main()
+I (353) button: IoT Button Version: 3.2.0
+I (353) gpio: GPIO[41]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 1| Pulldown: 0| Intr:0 
+I (363) example_main_led: Example configured to blink addressable LED!
+I (373) gpio: GPIO[35]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 1| Pulldown: 0| Intr:0 
+I (383) tusb-hid-keyboard-msc-settings: Initializing wear levelling
+W (473) tinyusb_msc_storage: f_mount failed (13)
+W (473) tinyusb_msc_storage: formatting card, allocation unit size=4096
+I (1413) tusb-hid-keyboard-msc-settings: Creating file
+I (1883) tusb-hid-keyboard-msc-settings: BUTTON_LONG_PRESS_START_1
+I (2013) tusb-hid-keyboard-msc-settings: firstWait0 167
+I (2023) tusb-hid-keyboard-msc-settings: firstWait1 168
+I (2023) tusb-hid-keyboard-msc-settings: firstWait2 168
+I (2023) tusb-hid-keyboard-msc-settings: bootmode 1
+I (2033) tusb-hid-keyboard-msc-settings: Reading file
+I (2033) tusb-hid-keyboard-msc-settings: Read from file: '{"settings_mode": "storage", "color": "red"}'
+I (2043) tusb-hid-keyboard-msc-settings: json_str '{"settings_mode": "storage", "color": "red"}'
+I (2053) tusb-hid-keyboard-msc-settings: Key: settings_mode, Value: storage
+
+I (2063) tusb-hid-keyboard-msc-settings: Key: color, Value: red
+
+I (2073) tusb-hid-keyboard-msc-settings: Settings Mode is storage
+
+I (2073) tusb-hid-keyboard-msc-settings: USB Composite initialization
+I (2083) tusb-hid-keyboard-msc-settings: USB Composite initialization1
+None
