@@ -1,5 +1,5 @@
 idf_component_register(
-    SRCS "../hid_device/usb_descriptors.c" "tinyusb_hid.c" "usb_hid_device_main.c"
+    SRCS "../hid_device/usb_descriptors.c" "usb_hid_device_main.c"
     INCLUDE_DIRS "../hid_device"
 )
 
