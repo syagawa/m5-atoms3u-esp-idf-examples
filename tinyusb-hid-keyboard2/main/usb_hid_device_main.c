@@ -66,7 +66,7 @@ void tinyusb_hid_mouse_button_report(uint8_t buttons_map)
     }
 }
 
-void tinyusb_hid_keyboard_report(uint8_t keycode[])
+void tinyusb_hid_keyboard_report(uint8_t keycode[], int shift)
 {
     ESP_LOGD(TAG, "keycode = %u %u %u %u %u %u", keycode[0], keycode[1], keycode[2], keycode[3], keycode[4], keycode[5]);
 
@@ -91,7 +91,11 @@ void tinyusb_hid_keyboard_report(uint8_t keycode[])
         _keycode[4] = keycode[4];
         _keycode[5] = keycode[5];
 
-        tud_hid_keyboard_report(REPORT_ID_KEYBOARD, 0, _keycode);
+        if(shift == 1){
+            tud_hid_keyboard_report(REPORT_ID_KEYBOARD, KEYBOARD_MODIFIER_LEFTSHIFT, _keycode);
+        }else{
+            tud_hid_keyboard_report(REPORT_ID_KEYBOARD, 0, _keycode);
+        }
         s_keyboard_pressed = true;
     }
 }
@@ -189,7 +193,7 @@ static void button_keyboard_cb(void *arg, void *arg2)
     default:
         break;
     }
-    tinyusb_hid_keyboard_report(_keycode);
+    tinyusb_hid_keyboard_report(_keycode, 0);
     ESP_LOGI(TAG, "Keyboard %c", _keycode[0] - HID_KEY_A + 'a');
 }
 
@@ -219,6 +223,32 @@ static void button_mouse_cb(void *arg, void *arg2)
         break;
     }
     tinyusb_hid_mouse_move_report(mouse_offset_x, mouse_offset_y, 0, 0);
+    ESP_LOGI(TAG, "Mouse x=%d y=%d", mouse_offset_x, mouse_offset_y);
+}
+
+static void button_km_cb(void *arg, void *arg2){
+    button_handle_t button_hdl = (button_handle_t)arg;
+    int button_gpio = get_button_gpio(button_hdl);
+    int mouse_offset_x = 8;
+    int mouse_offset_y = 8;
+
+    uint8_t keycode1[6] = {HID_KEY_A};
+    uint8_t keycode2[6] = {HID_KEY_A + 0x20};
+
+    tinyusb_hid_keyboard_report(keycode1, 0);
+
+    vTaskDelay(pdMS_TO_TICKS(200));
+
+    tinyusb_hid_keyboard_report(keycode2, 0);
+
+    vTaskDelay(pdMS_TO_TICKS(200));
+
+    tinyusb_hid_keyboard_report(keycode1, 1);
+
+    vTaskDelay(pdMS_TO_TICKS(200));
+
+    tinyusb_hid_mouse_move_report(mouse_offset_x, mouse_offset_y, 0, 0);
+    ESP_LOGI(TAG, "Keyboard %c", keycode1[0] - HID_KEY_A + 'a');
     ESP_LOGI(TAG, "Mouse x=%d y=%d", mouse_offset_x, mouse_offset_y);
 }
 
@@ -303,12 +333,15 @@ void app_main(void)
     }
 
 // #ifdef CONFIG_SUBCLASS_KEYBOARD
-    button_cb_t button_cb = button_keyboard_cb;
-    ESP_LOGI(TAG, "HID Keyboard demo: press button to simulate keyboard");
+    // button_cb_t button_cb = button_keyboard_cb;
+    // ESP_LOGI(TAG, "HID Keyboard demo: press button to simulate keyboard");
 // #elif defined CONFIG_SUBCLASS_MOUSE
 //     button_cb_t button_cb = button_mouse_cb;
 //     ESP_LOGI(TAG, "HID Mouse demo: press button to simulate mouse");
 // #endif
+
+    button_cb_t button_cb = button_km_cb;
+
     ESP_LOGI(TAG, "Wait Mount through USB interface");
 
     /* register button callback, send HID report when click button */
