@@ -4,7 +4,7 @@ idf_component_register(
     SRCS "../hid_device/usb_descriptors.c" "main.c"
     INCLUDE_DIRS "../hid_device ."
     PRIV_REQUIRES fatfs wear_levelling esp_partition
-    REQUIRES json tinyusb
+    REQUIRES json
 )
 
 
