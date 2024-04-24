@@ -214,6 +214,17 @@ char * getSettingByKey(char * targetkey){
 
 }
 
+tinyusb_config_t getTusbConfigStorage() {
+    const tinyusb_config_t tusb_cfgStorage = {
+        .device_descriptor = NULL,
+        .string_descriptor = NULL,
+        .string_descriptor_count = 0,
+        .external_phy = false,
+        .configuration_descriptor = NULL,
+    };
+    return tusb_cfgStorage;
+}
+
 void startSettingsMode(){
 
     cJSON * obj = getSettings();
@@ -247,13 +258,14 @@ void startSettingsMode(){
       showColorWithBrightness("YELLOW", 0.1);
 
       ESP_LOGI(TAG, "USB Composite initialization");
-      const tinyusb_config_t tusb_cfgStorage = {
-          .device_descriptor = NULL,
-          .string_descriptor = NULL,
-          .string_descriptor_count = 0,
-          .external_phy = false,
-          .configuration_descriptor = NULL,
-      };
+      const tinyusb_config_t tusb_cfgStorage = getTusbConfigStorage();
+    //   const tinyusb_config_t tusb_cfgStorage = {
+    //       .device_descriptor = NULL,
+    //       .string_descriptor = NULL,
+    //       .string_descriptor_count = 0,
+    //       .external_phy = false,
+    //       .configuration_descriptor = NULL,
+    //   };
       ESP_LOGI(TAG, "USB Composite initialization1");
       ESP_ERROR_CHECK(tinyusb_driver_install(&tusb_cfgStorage));
       ESP_LOGI(TAG, "USB Composite initialization2");

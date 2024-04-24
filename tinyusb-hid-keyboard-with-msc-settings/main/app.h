@@ -173,6 +173,17 @@ static void app_send_hid_demo(void)
     }
 }
 
+tinyusb_config_t getTusbConfigApp() {
+    const tinyusb_config_t tusb_cfgApp = {
+        .device_descriptor = NULL,
+        .string_descriptor = hid_string_descriptor,
+        .string_descriptor_count = sizeof(hid_string_descriptor) / sizeof(hid_string_descriptor[0]),
+        .external_phy = false,
+        .configuration_descriptor = hid_configuration_descriptor,
+    };
+    return tusb_cfgApp;
+}
+
 void setApp2(void)
 {
     // Initialize button that will trigger HID reports
@@ -186,13 +197,14 @@ void setApp2(void)
     // ESP_ERROR_CHECK(gpio_config(&boot_button_config));
 
     ESP_LOGI(TAG, "USB initialization");
-    const tinyusb_config_t tusb_cfgApp = {
-        .device_descriptor = NULL,
-        .string_descriptor = hid_string_descriptor,
-        .string_descriptor_count = sizeof(hid_string_descriptor) / sizeof(hid_string_descriptor[0]),
-        .external_phy = false,
-        .configuration_descriptor = hid_configuration_descriptor,
-    };
+    const tinyusb_config_t tusb_cfgApp = getTusbConfigApp();
+    // const tinyusb_config_t tusb_cfgApp = {
+    //     .device_descriptor = NULL,
+    //     .string_descriptor = hid_string_descriptor,
+    //     .string_descriptor_count = sizeof(hid_string_descriptor) / sizeof(hid_string_descriptor[0]),
+    //     .external_phy = false,
+    //     .configuration_descriptor = hid_configuration_descriptor,
+    // };
 
     ESP_ERROR_CHECK(tinyusb_driver_install(&tusb_cfgApp));
     ESP_LOGI(TAG, "USB initialization DONE");
