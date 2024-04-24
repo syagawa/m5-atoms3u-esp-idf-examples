@@ -186,7 +186,7 @@ void setApp2(void)
     // ESP_ERROR_CHECK(gpio_config(&boot_button_config));
 
     ESP_LOGI(TAG, "USB initialization");
-    const tinyusb_config_t tusb_cfg = {
+    const tinyusb_config_t tusb_cfgApp = {
         .device_descriptor = NULL,
         .string_descriptor = hid_string_descriptor,
         .string_descriptor_count = sizeof(hid_string_descriptor) / sizeof(hid_string_descriptor[0]),
@@ -194,7 +194,7 @@ void setApp2(void)
         .configuration_descriptor = hid_configuration_descriptor,
     };
 
-    ESP_ERROR_CHECK(tinyusb_driver_install(&tusb_cfg));
+    ESP_ERROR_CHECK(tinyusb_driver_install(&tusb_cfgApp));
     ESP_LOGI(TAG, "USB initialization DONE");
 
     // while (1) {
