@@ -214,11 +214,41 @@ char * getSettingByKey(char * targetkey){
 
 }
 
+const char* msc_string_descriptor[5] = {
+    // array of pointer to string descriptors
+    (char[]){0x09, 0x04},  // 0: is supported language is English (0x0409)
+    "TinyUSB",             // 1: Manufacturer
+    "TinyUSB Device",      // 2: Product
+    "123456",              // 3: Serials, should use chip ID
+    "Example MSC",  // 4: HID
+};
+
+static const tusb_desc_device_t test_device_descriptor = {
+    .bLength = sizeof(test_device_descriptor),
+    .bDescriptorType = TUSB_DESC_DEVICE,
+    .bcdUSB = 0x0200,
+    .bDeviceClass = TUSB_CLASS_MISC,
+    .bDeviceSubClass = MISC_SUBCLASS_COMMON,
+    .bDeviceProtocol = MISC_PROTOCOL_IAD,
+    .bMaxPacketSize0 = CFG_TUD_ENDPOINT0_SIZE,
+    .idVendor = 0x303A, // This is Espressif VID. This needs to be changed according to Users / Customers
+    .idProduct = 0x4002,
+    .bcdDevice = 0x100,
+    .iManufacturer = 0x01,
+    .iProduct = 0x02,
+    .iSerialNumber = 0x03,
+    .bNumConfigurations = 0x01
+};
+
+
 tinyusb_config_t getTusbConfigStorage() {
     const tinyusb_config_t tusb_cfgStorage = {
-        .device_descriptor = NULL,
-        .string_descriptor = NULL,
-        .string_descriptor_count = 0,
+        .device_descriptor = &test_device_descriptor,
+        // .device_descriptor = NULL,
+        // .string_descriptor = NULL,
+        .string_descriptor = msc_string_descriptor,
+        // .string_descriptor_count = 0,
+        .string_descriptor_count = sizeof(msc_string_descriptor) / sizeof(msc_string_descriptor[0]),
         .external_phy = false,
         .configuration_descriptor = NULL,
     };
