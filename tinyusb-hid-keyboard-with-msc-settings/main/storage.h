@@ -297,8 +297,10 @@ void startSettingsMode(){
     //       .configuration_descriptor = NULL,
     //   };
       ESP_LOGI(TAG, "USB Composite initialization1");
-      ESP_ERROR_CHECK(tinyusb_driver_install(&tusb_cfgStorage));
+      tinyusb_driver_uninstall();
       ESP_LOGI(TAG, "USB Composite initialization2");
+      ESP_ERROR_CHECK(tinyusb_driver_install(&tusb_cfgStorage));
+      ESP_LOGI(TAG, "USB Composite initialization3");
 
       showColorWithBrightness("RED", 0.1);
 
