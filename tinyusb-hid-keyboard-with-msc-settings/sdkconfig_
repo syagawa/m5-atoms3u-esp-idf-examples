@@ -1560,7 +1560,7 @@ CONFIG_CU_DIAGNOSTICS_COLOR_ALWAYS=y
 #
 # TinyUSB Stack
 #
-CONFIG_TINYUSB_DEBUG_LEVEL=0
+CONFIG_TINYUSB_DEBUG_LEVEL=1
 
 #
 # TinyUSB task configuration
@@ -1619,7 +1619,7 @@ CONFIG_TINYUSB_MIDI_COUNT=0
 #
 # Human Interface Device Class (HID)
 #
-CONFIG_TINYUSB_HID_COUNT=0
+CONFIG_TINYUSB_HID_COUNT=1
 # end of Human Interface Device Class (HID)
 
 #

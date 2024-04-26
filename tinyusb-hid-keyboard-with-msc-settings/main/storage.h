@@ -15,6 +15,7 @@
 #include "cJSON.h"
 
 
+
 #define BASE_PATH "/usb" // base path to mount the partition
 
 static const char *TAG = "tusb-hid-keyboard-msc-settings";
@@ -214,6 +215,7 @@ char * getSettingByKey(char * targetkey){
 
 }
 
+
 const char* msc_string_descriptor[5] = {
     // array of pointer to string descriptors
     (char[]){0x09, 0x04},  // 0: is supported language is English (0x0409)
@@ -243,14 +245,15 @@ static const tusb_desc_device_t test_device_descriptor = {
 
 tinyusb_config_t getTusbConfigStorage() {
     const tinyusb_config_t tusb_cfgStorage = {
-        .device_descriptor = &test_device_descriptor,
-        // .device_descriptor = NULL,
-        // .string_descriptor = NULL,
-        .string_descriptor = msc_string_descriptor,
-        // .string_descriptor_count = 0,
-        .string_descriptor_count = sizeof(msc_string_descriptor) / sizeof(msc_string_descriptor[0]),
+        // .device_descriptor = &test_device_descriptor,
+        .device_descriptor = NULL,
+        .string_descriptor = NULL,
+        // .string_descriptor = msc_string_descriptor,
+        .string_descriptor_count = 0,
+        // .string_descriptor_count = sizeof(msc_string_descriptor) / sizeof(msc_string_descriptor[0]),
         .external_phy = false,
         .configuration_descriptor = NULL,
+        .vbus_monitor_io = true,
     };
     return tusb_cfgStorage;
 }
@@ -288,19 +291,31 @@ void startSettingsMode(){
       showColorWithBrightness("YELLOW", 0.1);
 
       ESP_LOGI(TAG, "USB Composite initialization");
-      const tinyusb_config_t tusb_cfgStorage = getTusbConfigStorage();
-    //   const tinyusb_config_t tusb_cfgStorage = {
-    //       .device_descriptor = NULL,
-    //       .string_descriptor = NULL,
-    //       .string_descriptor_count = 0,
-    //       .external_phy = false,
-    //       .configuration_descriptor = NULL,
-    //   };
+    //   const tinyusb_config_t tusb_cfgStorage = getTusbConfigStorage();
+      const tinyusb_config_t tusb_cfgStorage = {
+          .device_descriptor = NULL,
+          .string_descriptor = NULL,
+          .string_descriptor_count = 0,
+          .external_phy = false,
+#if (TUD_OPT_HIGH_SPEED)
+        .fs_configuration_descriptor = NULL,
+        .hs_configuration_descriptor = NULL,
+        .qualifier_descriptor = NULL,
+#else
+        .configuration_descriptor = NULL,
+#endif // TUD_OPT_HIGH_SPEED
+          .vbus_monitor_io = true,
+      };
       ESP_LOGI(TAG, "USB Composite initialization1");
-      tinyusb_driver_uninstall();
+    //   tinyusb_driver_uninstall();
       ESP_LOGI(TAG, "USB Composite initialization2");
+      ESP_LOGI(TAG, "USB Composite initialization3 %p\n", tusb_cfgStorage.device_descriptor);
+      ESP_LOGI(TAG, "USB Composite initialization3 %p\n", tusb_cfgStorage.string_descriptor);
+      ESP_LOGI(TAG, "USB Composite initialization3 %d\n", tusb_cfgStorage.string_descriptor_count);
+      ESP_LOGI(TAG, "USB Composite initialization3 %s\n", tusb_cfgStorage.external_phy ? "true" : "false");
+      ESP_LOGI(TAG, "USB Composite initialization3 %p\n", tusb_cfgStorage.configuration_descriptor);
       ESP_ERROR_CHECK(tinyusb_driver_install(&tusb_cfgStorage));
-      ESP_LOGI(TAG, "USB Composite initialization3");
+      ESP_LOGI(TAG, "USB Composite initialization4");
 
       showColorWithBrightness("RED", 0.1);
 
