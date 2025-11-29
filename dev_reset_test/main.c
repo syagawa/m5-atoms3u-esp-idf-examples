@@ -3,6 +3,7 @@
 #include "esp_log.h"
 #include "tinyusb.h"
 #include "tusb_msc_storage.h"
+#include "led.h"
 
 static const char *TAG = "usb_mode";
 
@@ -46,15 +47,19 @@ void app_main(void)
     esp_reset_reason_t reason = esp_reset_reason();
     ESP_LOGI(TAG, "Reset reason = %d", reason);
 
+
     // ------------------------------------------
     //  Reset理由で USB モードを切り替える
     // ------------------------------------------
     if (reason == ESP_RST_EXT) {
         // ENピンによるリセット → MSC
         start_msc();
+        lightLed("RED");
     } else {
         // 通常の再起動・電源投入 → HID
         start_hid_keyboard();
+        lightLed("WHITE");
+
     }
 }
 
