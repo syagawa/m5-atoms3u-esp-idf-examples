@@ -20,7 +20,6 @@ void (*singleClickAction)(void);
 void (*doubleClickAction)(void);
 void (*longPressedAction)(void);
 
-
 static void setButtonLongPressInited(){
   buttonLongPressInited = 1;
 }
@@ -78,9 +77,11 @@ static void button_single_click_cb(void *arg,void *usr_data)
 
     int a = iot_button_get_repeat((button_handle_t)arg);
     ESP_LOGI(TAG, "BUTTON_SINGLE_CLICKaaa %d", a);
-    if(isBootModeMain() && completedFirstWait == 1 && singleClickAction != NULL){
-      singleClickAction();
-    }
+    singleClickAction();
+
+    // if(isBootModeMain() && completedFirstWait == 1 && singleClickAction != NULL){
+    //   singleClickAction();
+    // }
 }
 
 static void button_long_press_cb(void *arg,void *usr_data){

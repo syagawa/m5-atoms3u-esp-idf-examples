@@ -76,19 +76,26 @@ void firstWait(int sec){
   setCompletedFirstWait();
 }
 
+void onSingleClick() {
+  esp_restart();
+}
+
 
 void app_main(void){
   ESP_LOGI(TAG, "Reset saved_reset_reason = %d", saved_reset_reason);
   esp_reset_reason_t reason = esp_reset_reason();
+
+  // 通常起動だと 11 esp_restartだとreset reason が3になる
   ESP_LOGI(TAG, "Reset reason = %d", reason);
 
   ESP_LOGI(TAG, "Reset boot_mode = %d", boot_mode);
 
-  firstWait(3);
+  singleClickAction = onSingleClick;
+
+  initButton();
+  initLed();
 
   boot_mode = 1;
 
-  // esp_restartだとreset reason が3になる
-  esp_restart();
 
 }
