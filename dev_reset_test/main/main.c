@@ -97,5 +97,12 @@ void app_main(void){
 
   boot_mode = 1;
 
+  if(reason == 11){
+    lightLed("blue");
+  }else if(reason == 3){
+    lightLed("yellow");
+  }else{
+    lightLed("white");
+  }
 
 }
