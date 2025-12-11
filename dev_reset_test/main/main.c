@@ -100,7 +100,7 @@ void app_main(void){
   if(reason == 11){
     lightLed("blue");
   }else if(reason == 3){
-    lightLed("yellow");
+    lightLed("green");
   }else{
     lightLed("white");
   }
