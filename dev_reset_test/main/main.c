@@ -90,37 +90,58 @@ void app_main(void){
 
   ESP_LOGI(TAG, "Reset boot_mode = %d", boot_mode);
 
-  singleClickAction = onSingleClick;
+  // singleClickAction = onSingleClick;
 
   initButton();
   initLed();
 
   boot_mode = 1;
 
-  if(reason == 11){
-    lightLed("blue");
-  }else if(reason == 3){
+  if(reason == 3){
     lightLed("green");
-  }else if(reason == 1){
-    lightLed("red");
-  }else if(reason == 2){
-    lightLed("orange");
-  }else if(reason == 4){
-    lightLed("yellow");
-  }else if(reason == 5){
-    lightLed("cyan");
-  }else if(reason == 6){
-    lightLed("magenta");
-  }else if(reason == 7){
-    lightLed("pink");
-  }else if(reason == 8){
-    lightLed("gold");
-  }else if(reason == 9){
-    lightLed("violete");
-  }else if(reason == 10){
-    lightLed("purple");
+    ESP_LOGI(TAG, "restarted esp");
+    // settings mode
   }else{
-    lightLed("white");
+
+    if(isButtonPressed()){
+      // lightLed("orange");
+      ESP_LOGI(TAG, "pressed");
+      esp_restart();
+      return;
+    }
+
+    lightLed("red");
+    ESP_LOGI(TAG, "normal");
+
   }
+
+  
+
+
+  // if(reason == 11){
+  //   lightLed("blue");
+  // }else if(reason == 3){
+  //   lightLed("green");
+  // }else if(reason == 1){
+  //   lightLed("red");
+  // }else if(reason == 2){
+  //   lightLed("orange");
+  // }else if(reason == 4){
+  //   lightLed("yellow");
+  // }else if(reason == 5){
+  //   lightLed("cyan");
+  // }else if(reason == 6){
+  //   lightLed("magenta");
+  // }else if(reason == 7){
+  //   lightLed("pink");
+  // }else if(reason == 8){
+  //   lightLed("gold");
+  // }else if(reason == 9){
+  //   lightLed("violete");
+  // }else if(reason == 10){
+  //   lightLed("purple");
+  // }else{
+  //   lightLed("white");
+  // }
 
 }
