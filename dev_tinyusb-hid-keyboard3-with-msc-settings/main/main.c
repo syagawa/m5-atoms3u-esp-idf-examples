@@ -36,18 +36,6 @@
 #include "app.h"
 
 
-#include "esp_system.h"
-#include "esp_private/startup_internal.h"
-
-static esp_reset_reason_t saved_reset_reason; 
-
-RTC_DATA_ATTR static int boot_mode = 0;
-
-static void early_hook(void)
-{
-    saved_reset_reason = esp_reset_reason();
-    // ここは app_main より前。ログやフラグ保存などが可能。
-}
 
 void firstWait(int sec){
 
@@ -76,28 +64,33 @@ void firstWait(int sec){
   setCompletedFirstWait();
 }
 
-void onSingleClick() {
-  esp_restart();
+
+
+void enterSettingsMode(){
+  lightLed("WHITE");
+  startSettingsMode();
 }
 
+void enterMain(){
+  setApp();
+  while(1){
+    appInLoop();
+    vTaskDelay(1);
+  }
+}
 
 void app_main(void){
-  ESP_LOGI(TAG, "Reset saved_reset_reason = %d", saved_reset_reason);
+
   esp_reset_reason_t reason = esp_reset_reason();
-
-  // 通常起動だと 11 esp_restartだとreset reason が3になる
-  ESP_LOGI(TAG, "Reset reason = %d", reason);
-
-  ESP_LOGI(TAG, "Reset boot_mode = %d", boot_mode);
-
-  // singleClickAction = onSingleClick;
 
   initButton();
 
   if(reason == 3){
     ESP_LOGI(TAG, "restarted esp");
     initLed();
-    lightLed("blue");
+    lightLed("green");
+    initSettings(versionStr, initialDataStr);
+    enterSettingsMode();
     // settings mode
   }else if(isButtonPressed()){
     // lightLed("orange");
@@ -107,33 +100,7 @@ void app_main(void){
     initLed();
     lightLed("red");
     ESP_LOGI(TAG, "normal");
+    enterMain();
   }
-
-
-  // if(reason == 11){
-  //   lightLed("blue");
-  // }else if(reason == 3){
-  //   lightLed("green");
-  // }else if(reason == 1){
-  //   lightLed("red");
-  // }else if(reason == 2){
-  //   lightLed("orange");
-  // }else if(reason == 4){
-  //   lightLed("yellow");
-  // }else if(reason == 5){
-  //   lightLed("cyan");
-  // }else if(reason == 6){
-  //   lightLed("magenta");
-  // }else if(reason == 7){
-  //   lightLed("pink");
-  // }else if(reason == 8){
-  //   lightLed("gold");
-  // }else if(reason == 9){
-  //   lightLed("violete");
-  // }else if(reason == 10){
-  //   lightLed("purple");
-  // }else{
-  //   lightLed("white");
-  // }
 
 }
