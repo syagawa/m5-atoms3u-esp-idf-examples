@@ -90,7 +90,9 @@ void app_main(void){
     initLed();
     lightLed("green");
     initSettings(versionStr, initialDataStr);
+    ESP_LOGI(TAG, "after initSettings");
     enterSettingsMode();
+    ESP_LOGI(TAG, "after enterSettingsMode");
     // settings mode
   }else if(isButtonPressed()){
     // lightLed("orange");

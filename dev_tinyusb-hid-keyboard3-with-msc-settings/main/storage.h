@@ -98,7 +98,7 @@ static void resetSettings(char * initialDataStr) {
     
     removeFiles();
 
-    ESP_LOGI(TAG, "Creating file");
+    ESP_LOGI(TAG, "Creating file 1");
     FILE *f1 = fopen(file_path, "w");
     if (f1 == NULL) {
         ESP_LOGE(TAG, "Failed to open file for writing");
@@ -130,7 +130,8 @@ void initSettings(char * version, char * initialDataStr){
     }
 
     if (!file_exists(file_path)) {
-        ESP_LOGI(TAG, "Creating file");
+        // ここでコケる ストレージをクリアすればいける？
+        ESP_LOGI(TAG, "Creating file 0");
         FILE *f = fopen(file_path, "w");
         if (f == NULL) {
             ESP_LOGE(TAG, "Failed to open file for writing");
