@@ -84,3 +84,14 @@ I (584) main_task: Returned from app_main()
 
 
 This example is based on tusb_composite_msc_serialdevice from the esp-idf framework, which can be found at https://github.com/espressif/esp-idf/tree/master/examples/peripherals/usb/device/tusb_composite_msc_serialdevice .
+
+
+
+# フラッシュロムのサイズを確認
+esptool.py --chip esp32s3 --port /dev/ttyACM0 flash_id
+
+# storageの 2MB-3MBを削除
+esptool.py --chip esp32s3 --port COM3 erase_region 0x110000 0x100000
+
+# storageの 2MB以降を削除
+esptool.py --chip esp32s3 --port /dev/ttyACM0 erase_region 0x110000 0x6F0000
