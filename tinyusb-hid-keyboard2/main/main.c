@@ -9,7 +9,7 @@
 #include "esp_log.h"
 #include "sdkconfig.h"
 #include "iot_button.h"
-#include "hal/usb_hal.h"
+// #include "hal/usb_hal.h"
 #include "esp_private/usb_phy.h"
 
 #include <stdint.h>

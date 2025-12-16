@@ -1,27 +1,50 @@
 dependencies:
   espressif/button:
     component_hash: e162e6c8fc670ae297dca5ec75037966c1d69a1509f0b2048a883a7c54fb7aba
+    dependencies:
+    - name: idf
+      require: private
+      version: '>=4.0'
+    - name: espressif/cmake_utilities
+      registry_url: https://components.espressif.com
+      require: private
+      version: 0.*
     source:
-      service_url: https://api.components.espressif.com/
+      registry_url: https://components.espressif.com/
       type: service
     version: 2.5.6
   espressif/cmake_utilities:
     component_hash: 351350613ceafba240b761b4ea991e0f231ac7a9f59a9ee901f751bddc0bb18f
+    dependencies:
+    - name: idf
+      require: private
+      version: '>=4.1'
     source:
-      service_url: https://api.components.espressif.com/
+      registry_url: https://components.espressif.com
       type: service
     version: 0.5.3
   espressif/tinyusb:
     component_hash: 51f2fe138a3095c001467e63b46a77def8e4a136fb49f7cf7766533e772af820
+    dependencies:
+    - name: idf
+      require: private
+      version: '>=5.0'
     source:
-      service_url: https://api.components.espressif.com/
+      registry_url: https://components.espressif.com/
       type: service
+    targets:
+    - esp32s2
+    - esp32s3
+    - esp32p4
     version: 0.15.0~8
   idf:
-    component_hash: null
     source:
       type: idf
-    version: 5.2.0
-manifest_hash: fa00bcd680e2972f822d4a6b373df0fdd0d401c641416da2508056a4ac97a573
+    version: 5.2.6
+direct_dependencies:
+- espressif/button
+- espressif/tinyusb
+- idf
+manifest_hash: 3a85ec35761c47a9cb4ca5c558c057c48f8f65d204e4ddd6d400a879485f04af
 target: esp32s3
-version: 1.0.0
+version: 2.0.0
