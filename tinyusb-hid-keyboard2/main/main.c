@@ -226,6 +226,7 @@ static void button_mouse_cb(void *arg, void *arg2)
     ESP_LOGI(TAG, "Mouse x=%d y=%d", mouse_offset_x, mouse_offset_y);
 }
 
+// キーボード入力の処理
 static void button_km_cb(void *arg, void *arg2){
     button_handle_t button_hdl = (button_handle_t)arg;
     int button_gpio = get_button_gpio(button_hdl);
