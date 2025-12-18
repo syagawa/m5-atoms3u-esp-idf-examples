@@ -18,6 +18,8 @@
 #include "usb_descriptors.h"
 #include "device/usbd.h"
 // #include "keyboard.h"
+#include <string.h>
+
 
 #define TAG "HID Example1"
 static bool s_keyboard_pressed = false;
@@ -254,73 +256,116 @@ static void button_km_cb(void *arg, void *arg2){
 }
 
 
-
-static void ascii_to_hid_with_modifier(char c, uint8_t *keycode, uint8_t
-*modifier) {
-     *modifier = 0;
-     *keycode = 0;
+const char* keyboard_layout_mode = "jis"; //jis, us
+static void ascii_to_hid_with_modifier(char c, uint8_t *keycode, uint8_t *modifier) {
+    *modifier = 0;
+    *keycode = 0;
 
      // アルファベット小文字
      if (c >= 'a' && c <= 'z') {
          *keycode = (c - 'a') + HID_KEY_A;
-     }
      // アルファベット大文字
-     else if (c >= 'A' && c <= 'Z') {
+    } else if (c >= 'A' && c <= 'Z') {
          *keycode = (c - 'A') + HID_KEY_A;
          *modifier = KEYBOARD_MODIFIER_LEFTSHIFT;
-     }
      // 数字
-     else if (c >= '1' && c <= '9') {
+    } else if (c >= '1' && c <= '9') {
          *keycode = (c - '1') + HID_KEY_1;
-     }
-     else if (c == '0') {
+    } else if (c == '0') {
          *keycode = HID_KEY_0;
-     }
-     // 記号と特殊キー (US配列基準)
-     else {
-         switch (c) {
-             case ' ':  *keycode = HID_KEY_SPACE; break;
-             case '\n': *keycode = HID_KEY_ENTER; break;
-             case '\t': *keycode = HID_KEY_TAB; break;
-             case '-':  *keycode = HID_KEY_MINUS; break;
-             case '=':  *keycode = HID_KEY_EQUAL; break;
-             case '[':  *keycode = HID_KEY_BRACKET_LEFT; break;
-             case ']':  *keycode = HID_KEY_BRACKET_RIGHT; break;
-             case '\\': *keycode = HID_KEY_BACKSLASH; break;
-             case ';':  *keycode = HID_KEY_SEMICOLON; break;
-             case '\'': *keycode = HID_KEY_APOSTROPHE; break;
-             case '`':  *keycode = HID_KEY_GRAVE; break;
-             case ',':  *keycode = HID_KEY_COMMA; break;
-             case '.':  *keycode = HID_KEY_PERIOD; break;
-             case '/':  *keycode = HID_KEY_SLASH; break;
+    // 記号と特殊キー (US配列基準)
+    } else {
+        if(strcmp(keyboard_layout_mode, "us") == 0){
+            switch (c) {
+                 case ' ':  *keycode = HID_KEY_SPACE; break;
+                 case '\n': *keycode = HID_KEY_ENTER; break;
+                 case '\t': *keycode = HID_KEY_TAB; break;
+                 case '-':  *keycode = HID_KEY_MINUS; break;
+                 case '=':  *keycode = HID_KEY_EQUAL; break;
+                 case '[':  *keycode = HID_KEY_BRACKET_LEFT; break;
+                 case ']':  *keycode = HID_KEY_BRACKET_RIGHT; break;
+                 case '\\': *keycode = HID_KEY_BACKSLASH; break;
+                 case ';':  *keycode = HID_KEY_SEMICOLON; break;
+                 case '\'': *keycode = HID_KEY_APOSTROPHE; break;
+                 case '`':  *keycode = HID_KEY_GRAVE; break;
+                 case ',':  *keycode = HID_KEY_COMMA; break;
+                 case '.':  *keycode = HID_KEY_PERIOD; break;
+                 case '/':  *keycode = HID_KEY_SLASH; break;
+    
+                 // Shiftが必要な記号
+                 case '!':  *keycode = HID_KEY_1; *modifier = KEYBOARD_MODIFIER_LEFTSHIFT; break;
+                 case '@':  *keycode = HID_KEY_2; *modifier = KEYBOARD_MODIFIER_LEFTSHIFT; break;
+                 case '#':  *keycode = HID_KEY_3; *modifier = KEYBOARD_MODIFIER_LEFTSHIFT; break;
+                 case '$':  *keycode = HID_KEY_4; *modifier = KEYBOARD_MODIFIER_LEFTSHIFT; break;
+                 case '%':  *keycode = HID_KEY_5; *modifier = KEYBOARD_MODIFIER_LEFTSHIFT; break;
+                 case '^':  *keycode = HID_KEY_6; *modifier = KEYBOARD_MODIFIER_LEFTSHIFT; break;
+                 case '&':  *keycode = HID_KEY_7; *modifier = KEYBOARD_MODIFIER_LEFTSHIFT; break;
+                 case '*':  *keycode = HID_KEY_8; *modifier = KEYBOARD_MODIFIER_LEFTSHIFT; break;
+                 case '(':  *keycode = HID_KEY_9; *modifier = KEYBOARD_MODIFIER_LEFTSHIFT; break;
+                 case ')':  *keycode = HID_KEY_0; *modifier = KEYBOARD_MODIFIER_LEFTSHIFT; break;
+                 case '_':  *keycode = HID_KEY_MINUS; *modifier = KEYBOARD_MODIFIER_LEFTSHIFT; break;
+                 case '+':  *keycode = HID_KEY_EQUAL; *modifier = KEYBOARD_MODIFIER_LEFTSHIFT; break;
+                 case '{':  *keycode = HID_KEY_BRACKET_LEFT; *modifier = KEYBOARD_MODIFIER_LEFTSHIFT; break;
+                 case '}':  *keycode = HID_KEY_BRACKET_RIGHT; *modifier = KEYBOARD_MODIFIER_LEFTSHIFT; break;
+                 case '|':  *keycode = HID_KEY_BACKSLASH; *modifier = KEYBOARD_MODIFIER_LEFTSHIFT; break;
+                 case ':':  *keycode = HID_KEY_SEMICOLON; *modifier = KEYBOARD_MODIFIER_LEFTSHIFT; break;
+                 case '\"': *keycode = HID_KEY_APOSTROPHE; *modifier = KEYBOARD_MODIFIER_LEFTSHIFT; break;
+                 case '~':  *keycode = HID_KEY_GRAVE; *modifier = KEYBOARD_MODIFIER_LEFTSHIFT; break;
+                 case '<':  *keycode = HID_KEY_COMMA; *modifier = KEYBOARD_MODIFIER_LEFTSHIFT; break;
+                 case '>':  *keycode = HID_KEY_PERIOD; *modifier = KEYBOARD_MODIFIER_LEFTSHIFT; break;
+                 case '?':  *keycode = HID_KEY_SLASH; *modifier = KEYBOARD_MODIFIER_LEFTSHIFT; break;
+    
+                 default:   *keycode = 0; break; // 未対応
+            }
+            
 
-             // Shiftが必要な記号
-             case '!':  *keycode = HID_KEY_1; *modifier = KEYBOARD_MODIFIER_LEFTSHIFT; break;
-             case '@':  *keycode = HID_KEY_2; *modifier = KEYBOARD_MODIFIER_LEFTSHIFT; break;
-             case '#':  *keycode = HID_KEY_3; *modifier = KEYBOARD_MODIFIER_LEFTSHIFT; break;
-             case '$':  *keycode = HID_KEY_4; *modifier = KEYBOARD_MODIFIER_LEFTSHIFT; break;
-             case '%':  *keycode = HID_KEY_5; *modifier = KEYBOARD_MODIFIER_LEFTSHIFT; break;
-             case '^':  *keycode = HID_KEY_6; *modifier = KEYBOARD_MODIFIER_LEFTSHIFT; break;
-             case '&':  *keycode = HID_KEY_7; *modifier = KEYBOARD_MODIFIER_LEFTSHIFT; break;
-             case '*':  *keycode = HID_KEY_8; *modifier = KEYBOARD_MODIFIER_LEFTSHIFT; break;
-             case '(':  *keycode = HID_KEY_9; *modifier = KEYBOARD_MODIFIER_LEFTSHIFT; break;
-             case ')':  *keycode = HID_KEY_0; *modifier = KEYBOARD_MODIFIER_LEFTSHIFT; break;
-             case '_':  *keycode = HID_KEY_MINUS; *modifier = KEYBOARD_MODIFIER_LEFTSHIFT; break;
-             case '+':  *keycode = HID_KEY_EQUAL; *modifier = KEYBOARD_MODIFIER_LEFTSHIFT; break;
-             case '{':  *keycode = HID_KEY_BRACKET_LEFT; *modifier = KEYBOARD_MODIFIER_LEFTSHIFT; break;
-             case '}':  *keycode = HID_KEY_BRACKET_RIGHT; *modifier = KEYBOARD_MODIFIER_LEFTSHIFT; break;
-             case '|':  *keycode = HID_KEY_BACKSLASH; *modifier = KEYBOARD_MODIFIER_LEFTSHIFT; break;
-             case ':':  *keycode = HID_KEY_SEMICOLON; *modifier = KEYBOARD_MODIFIER_LEFTSHIFT; break;
-             case '\"': *keycode = HID_KEY_APOSTROPHE; *modifier = KEYBOARD_MODIFIER_LEFTSHIFT; break;
-             case '~':  *keycode = HID_KEY_GRAVE; *modifier = KEYBOARD_MODIFIER_LEFTSHIFT; break;
-             case '<':  *keycode = HID_KEY_COMMA; *modifier = KEYBOARD_MODIFIER_LEFTSHIFT; break;
-             case '>':  *keycode = HID_KEY_PERIOD; *modifier = KEYBOARD_MODIFIER_LEFTSHIFT; break;
-             case '?':  *keycode = HID_KEY_SLASH; *modifier = KEYBOARD_MODIFIER_LEFTSHIFT; break;
+        }else{
+            switch (c) {
+                case ' ':  *keycode = HID_KEY_SPACE; break;
+                case '\n': *keycode = HID_KEY_ENTER; break;
+                case '\t': *keycode = HID_KEY_TAB; break;
+                
+                // Shiftなし
+                case '-':  *keycode = HID_KEY_MINUS; break;
+                case '^':  *keycode = HID_KEY_EQUAL; break;         // JISの^
+                case '@':  *keycode = HID_KEY_BRACKET_LEFT; break;  // JISの@
+                case '[':  *keycode = HID_KEY_BRACKET_RIGHT; break; // JISの[
+                case ';':  *keycode = HID_KEY_SEMICOLON; break;
+                case ':':  *keycode = HID_KEY_APOSTROPHE; break;    // JISの:
+                case ']':  *keycode = HID_KEY_BACKSLASH; break;     // JISの]
+                case ',':  *keycode = HID_KEY_COMMA; break;
+                case '.':  *keycode = HID_KEY_PERIOD; break;
+                case '/':  *keycode = HID_KEY_SLASH; break;
+                case '\\': *keycode = HID_KEY_INTERNATIONAL3; break; // JISの￥(変換が必要な場合あり)
 
-             default:   *keycode = 0; break; // 未対応
-         }
+                // Shiftあり
+                case '!':  *keycode = HID_KEY_1; *modifier = KEYBOARD_MODIFIER_LEFTSHIFT; break;
+                case '\"': *keycode = HID_KEY_2; *modifier = KEYBOARD_MODIFIER_LEFTSHIFT; break;
+                case '#':  *keycode = HID_KEY_3; *modifier = KEYBOARD_MODIFIER_LEFTSHIFT; break;
+                case '$':  *keycode = HID_KEY_4; *modifier = KEYBOARD_MODIFIER_LEFTSHIFT; break;
+                case '%':  *keycode = HID_KEY_5; *modifier = KEYBOARD_MODIFIER_LEFTSHIFT; break;
+                case '&':  *keycode = HID_KEY_6; *modifier = KEYBOARD_MODIFIER_LEFTSHIFT; break;
+                case '\'': *keycode = HID_KEY_7; *modifier = KEYBOARD_MODIFIER_LEFTSHIFT; break;
+                case '(':  *keycode = HID_KEY_8; *modifier = KEYBOARD_MODIFIER_LEFTSHIFT; break;
+                case ')':  *keycode = HID_KEY_9; *modifier = KEYBOARD_MODIFIER_LEFTSHIFT; break;
+                case '=':  *keycode = HID_KEY_MINUS; *modifier = KEYBOARD_MODIFIER_LEFTSHIFT; break;
+                case '~':  *keycode = HID_KEY_EQUAL; *modifier = KEYBOARD_MODIFIER_LEFTSHIFT; break;
+                case '`':  *keycode = HID_KEY_BRACKET_LEFT; *modifier = KEYBOARD_MODIFIER_LEFTSHIFT; break;
+                case '{':  *keycode = HID_KEY_BRACKET_RIGHT; *modifier = KEYBOARD_MODIFIER_LEFTSHIFT; break;
+                case '+':  *keycode = HID_KEY_SEMICOLON; *modifier = KEYBOARD_MODIFIER_LEFTSHIFT; break;
+                case '*':  *keycode = HID_KEY_APOSTROPHE; *modifier = KEYBOARD_MODIFIER_LEFTSHIFT; break;
+                case '}':  *keycode = HID_KEY_BACKSLASH; *modifier = KEYBOARD_MODIFIER_LEFTSHIFT; break;
+                case '<':  *keycode = HID_KEY_COMMA; *modifier = KEYBOARD_MODIFIER_LEFTSHIFT; break;
+                case '>':  *keycode = HID_KEY_PERIOD; *modifier = KEYBOARD_MODIFIER_LEFTSHIFT; break;
+                case '?':  *keycode = HID_KEY_SLASH; *modifier = KEYBOARD_MODIFIER_LEFTSHIFT; break;
+                case '_':  *keycode = HID_KEY_INTERNATIONAL1; *modifier = KEYBOARD_MODIFIER_LEFTSHIFT; break; // JISのアンダーバー
+
+                default:   *keycode = 0; break;
+            }
+        }
      }
 }
+
 
 void usb_hid_print_string(const char *str) {
      uint8_t key_none[6] = {0};
