@@ -336,11 +336,11 @@ void usb_hid_print_string(const char *str) {
 
              // キーを押す
              tinyusb_hid_keyboard_report(key_report, modifier);
-             vTaskDelay(pdMS_TO_TICKS(30));
+             vTaskDelay(pdMS_TO_TICKS(15));
 
              // キーを離す
              tinyusb_hid_keyboard_report(key_none, 0);
-             vTaskDelay(pdMS_TO_TICKS(30));
+             vTaskDelay(pdMS_TO_TICKS(15));
          }
      }
 }
