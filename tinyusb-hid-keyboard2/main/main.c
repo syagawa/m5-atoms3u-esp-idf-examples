@@ -336,7 +336,8 @@ static void ascii_to_hid_with_modifier(char c, uint8_t *keycode, uint8_t *modifi
                 case ',':  *keycode = HID_KEY_COMMA; break;
                 case '.':  *keycode = HID_KEY_PERIOD; break;
                 case '/':  *keycode = HID_KEY_SLASH; break;
-                case '\\': *keycode = HID_KEY_INTERNATIONAL3; break; // JISの￥(変換が必要な場合あり)
+                // case '\\': *keycode = HID_KEY_INTERNATIONAL3; break; // JISの￥(変換が必要な場合あり)
+                case '\\': *keycode = HID_KEY_BACKSLASH; break; // JISの￥(変換が必要な場合あり)
 
                 // Shiftあり
                 case '!':  *keycode = HID_KEY_1; *modifier = KEYBOARD_MODIFIER_LEFTSHIFT; break;
@@ -358,7 +359,7 @@ static void ascii_to_hid_with_modifier(char c, uint8_t *keycode, uint8_t *modifi
                 case '<':  *keycode = HID_KEY_COMMA; *modifier = KEYBOARD_MODIFIER_LEFTSHIFT; break;
                 case '>':  *keycode = HID_KEY_PERIOD; *modifier = KEYBOARD_MODIFIER_LEFTSHIFT; break;
                 case '?':  *keycode = HID_KEY_SLASH; *modifier = KEYBOARD_MODIFIER_LEFTSHIFT; break;
-                case '_':  *keycode = HID_KEY_INTERNATIONAL1; *modifier = KEYBOARD_MODIFIER_LEFTSHIFT; break; // JISのアンダーバー
+                // case '_':  *keycode = HID_KEY_UNDERSCORE; *modifier = KEYBOARD_MODIFIER_LEFTSHIFT; break; // JISのアンダーバー
 
                 default:   *keycode = 0; break;
             }
