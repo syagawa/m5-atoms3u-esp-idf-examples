@@ -1,6 +1,9 @@
-
+#ifndef HID_KEY_JIS_RO
+#define HID_KEY_JIS_RO 0x87  // JIS配列の「ろ」 / アンダースコア
+#endif
 #define TAG "HID Example1"
 static bool s_keyboard_pressed = false;
+
 
 void tinyusb_hid_keyboard_report(uint8_t keycode[], int shift)
 {
@@ -116,7 +119,8 @@ static void ascii_to_hid_with_modifier(char c, uint8_t *keycode, uint8_t *modifi
                 case '.':  *keycode = HID_KEY_PERIOD; break;
                 case '/':  *keycode = HID_KEY_SLASH; break;
                 // case '\\': *keycode = HID_KEY_INTERNATIONAL3; break; // JISの￥(変換が必要な場合あり)
-                case '\\': *keycode = HID_KEY_BACKSLASH; break; // JISの￥(変換が必要な場合あり)
+                // case '\\': *keycode = HID_KEY_BACKSLASH; break; // JISの￥(変換が必要な場合あり)
+                case '\\': *keycode = HID_KEY_JIS_RO; break; // JISの￥(変換が必要な場合あり)
 
                 // Shiftあり
                 case '!':  *keycode = HID_KEY_1; *modifier = KEYBOARD_MODIFIER_LEFTSHIFT; break;
@@ -138,7 +142,9 @@ static void ascii_to_hid_with_modifier(char c, uint8_t *keycode, uint8_t *modifi
                 case '<':  *keycode = HID_KEY_COMMA; *modifier = KEYBOARD_MODIFIER_LEFTSHIFT; break;
                 case '>':  *keycode = HID_KEY_PERIOD; *modifier = KEYBOARD_MODIFIER_LEFTSHIFT; break;
                 case '?':  *keycode = HID_KEY_SLASH; *modifier = KEYBOARD_MODIFIER_LEFTSHIFT; break;
-                // case '_':  *keycode = HID_KEY_UNDERSCORE; *modifier = KEYBOARD_MODIFIER_LEFTSHIFT; break; // JISのアンダーバー
+                case '_':  *keycode = HID_KEY_JIS_RO; *modifier = KEYBOARD_MODIFIER_LEFTSHIFT; break; // JISのアンダーバー
+                // case '_':  *keycode = HID_KEY_BACKSLASH; *modifier = KEYBOARD_MODIFIER_LEFTSHIFT; break; // JISのアンダーバー
+                
 
                 default:   *keycode = 0; break;
             }
@@ -158,14 +164,15 @@ void usb_hid_print_string(const char *str) {
 
          if (keycode != 0) {
              uint8_t key_report[6] = {keycode, 0, 0, 0, 0, 0};
+            //  uint8_t key_report[8] = {0x02, 0, keycode, 0, 0, 0, 0, 0};
 
-             // キーを押す
-             tinyusb_hid_keyboard_report(key_report, modifier);
-             vTaskDelay(pdMS_TO_TICKS(15));
+            // キーを押す
+            tud_hid_keyboard_report(REPORT_ID_KEYBOARD, modifier, key_report);
+            vTaskDelay(pdMS_TO_TICKS(15));
 
-             // キーを離す
-             tinyusb_hid_keyboard_report(key_none, 0);
-             vTaskDelay(pdMS_TO_TICKS(15));
+            // キーを離す
+            tud_hid_keyboard_report(1, 0, NULL);
+            vTaskDelay(pdMS_TO_TICKS(15));
          }
      }
 }

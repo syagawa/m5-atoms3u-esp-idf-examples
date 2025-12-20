@@ -229,7 +229,7 @@ static void button_km_cb(void *arg, void *arg2){
 
 static void button_km_cb2(void *arg, void *arg2) {
      // 記号混じりの文字列も送信可能
-     usb_hid_print_string("User: ESP32-S3!\nPassword: Admin_123_\|\\");
+     usb_hid_print_string("User: ESP32-S3!\nPassword: Admin_123_|\\\n12345^~-=/?/.>,<_,______");
 }
 
 //--------------------------------------------------------------------+
