@@ -30,8 +30,6 @@
 static int s_button_gpio[EXAMPLE_BUTTON_NUM] = {EXAMPLE_BUTTON_UP, EXAMPLE_BUTTON_DOWN, EXAMPLE_BUTTON_LEFT, EXAMPLE_BUTTON_RIGHT};
 static button_handle_t s_button_handles[EXAMPLE_BUTTON_NUM] = {NULL};
 
-
-
 //--------------------------------------------------------------------+
 // Device callbacks
 //--------------------------------------------------------------------+
@@ -85,13 +83,7 @@ static void usb_phy_init(void)
     usb_new_phy(&phy_conf, &phy_hdl);
 }
 
-void app_main(void)
-{
-    // switch esp usb phy to usb-otg
-    usb_phy_init();
-    tud_init(BOARD_TUD_RHPORT);
-    xTaskCreate(tusb_device_task, "TinyUSB", 4096, NULL, 5, NULL);
-
+void initKeyButtonSettings(void){
     /* buttons init, buttons used to simulate keyboard or mouse events */
     button_config_t cfg = {
         .type = BUTTON_TYPE_GPIO,
@@ -120,6 +112,17 @@ void app_main(void)
     for (size_t i = 0; i < EXAMPLE_BUTTON_NUM; i++) {
         iot_button_register_cb(s_button_handles[i], BUTTON_SINGLE_CLICK, button_cb, NULL);
     }
+
+}
+
+void app_main(void)
+{
+    // switch esp usb phy to usb-otg
+    usb_phy_init();
+    tud_init(BOARD_TUD_RHPORT);
+    xTaskCreate(tusb_device_task, "TinyUSB", 4096, NULL, 5, NULL);
+
+    initKeyButtonSettings();
 
     while (1) {
         vTaskDelay(pdMS_TO_TICKS(1000));
