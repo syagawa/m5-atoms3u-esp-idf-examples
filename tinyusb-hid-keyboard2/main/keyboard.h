@@ -5,6 +5,50 @@
 static bool s_keyboard_pressed = false;
 
 
+/************************************************** TinyUSB callbacks ***********************************************/
+// Invoked when sent REPORT successfully to host
+// Application can use this to send the next report
+// Note: For composite reports, report[0] is report ID
+void tud_hid_report_complete_cb(uint8_t itf, uint8_t const *report, uint16_t len)
+{
+    (void) itf;
+    (void) len;
+    uint8_t report_id = report[0];
+
+    if (report_id == REPORT_ID_KEYBOARD && s_keyboard_pressed) {
+        tud_hid_keyboard_report(REPORT_ID_KEYBOARD, 0, NULL);
+        s_keyboard_pressed = false;
+    }
+}
+
+// Invoked when received GET_REPORT control request
+// Application must fill buffer report's content and return its length.
+// Return zero will cause the stack to STALL request
+uint16_t tud_hid_get_report_cb(uint8_t itf, uint8_t report_id, hid_report_type_t report_type, uint8_t *buffer, uint16_t reqlen)
+{
+    // TODO not Implemented
+    (void) itf;
+    (void) report_id;
+    (void) report_type;
+    (void) buffer;
+    (void) reqlen;
+
+    return 0;
+}
+
+// Invoked when received SET_REPORT control request or
+// received data on OUT endpoint ( Report ID = 0, Type = 0 )
+void tud_hid_set_report_cb(uint8_t itf, uint8_t report_id, hid_report_type_t report_type, uint8_t const *buffer, uint16_t bufsize)
+{
+    // TODO set LED based on CAPLOCK, NUMLOCK etc...
+    (void) itf;
+    (void) report_id;
+    (void) report_type;
+    (void) buffer;
+    (void) bufsize;
+}
+
+
 void tinyusb_hid_keyboard_report(uint8_t keycode[], int shift)
 {
     // ESP_LOGD(TAG, "keycode = %u %u %u %u %u %u", keycode[0], keycode[1], keycode[2], keycode[3], keycode[4], keycode[5]);
@@ -154,8 +198,6 @@ static void ascii_to_hid_with_modifier(char c, uint8_t *keycode, uint8_t *modifi
 
 
 void usb_hid_print_string(const char *str) {
-     uint8_t key_none[6] = {0};
-
      for (int i = 0; str[i] != '\0'; i++) {
          uint8_t keycode = 0;
          uint8_t modifier = 0;
@@ -175,4 +217,9 @@ void usb_hid_print_string(const char *str) {
             vTaskDelay(pdMS_TO_TICKS(15));
          }
      }
+}
+
+static void button_km_cb(void *arg, void *arg2) {
+     // 記号混じりの文字列も送信可能
+     usb_hid_print_string("User: ESP32-S3!\nPassword: Admin_123_|\\\n12345^~-=/?/.>,<_,______");
 }
