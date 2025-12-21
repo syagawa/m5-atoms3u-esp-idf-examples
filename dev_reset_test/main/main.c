@@ -92,22 +92,25 @@ void app_main(void){
 
   // singleClickAction = onSingleClick;
 
-  initButton();
 
   if(reason == 3){
     ESP_LOGI(TAG, "restarted esp");
     initLed();
     lightLed("blue");
     // settings mode
-  }else if(isButtonPressed()){
-    // lightLed("orange");
-    ESP_LOGI(TAG, "pressed1");
-    esp_restart();
   }else{
-    initLed();
-    lightLed("red");
-    ESP_LOGI(TAG, "normal");
+    initButton();
+    if(isButtonPressed()){
+      // lightLed("orange");
+      ESP_LOGI(TAG, "pressed1");
+      esp_restart();
+    }else{
+      initLed();
+      lightLed("red");
+      ESP_LOGI(TAG, "normal");
+    }
   }
+  
 
 
   // if(reason == 11){
