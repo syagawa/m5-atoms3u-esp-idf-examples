@@ -83,7 +83,7 @@ void app_main(void){
 
   esp_reset_reason_t reason = esp_reset_reason();
 
-  initButton();
+  // initButton();
 
   if(reason == 3){
     ESP_LOGI(TAG, "restarted esp");
@@ -94,15 +94,18 @@ void app_main(void){
     enterSettingsMode();
     ESP_LOGI(TAG, "after enterSettingsMode");
     // settings mode
-  }else if(isButtonPressed()){
-    // lightLed("orange");
-    ESP_LOGI(TAG, "pressed1");
-    esp_restart();
   }else{
-    initLed();
-    lightLed("red");
-    ESP_LOGI(TAG, "normal");
-    enterMain();
+    initButton();
+    if(isButtonPressed()){
+      // lightLed("orange");
+      ESP_LOGI(TAG, "pressed1");
+      esp_restart();
+    }else{
+      initLed();
+      lightLed("red");
+      ESP_LOGI(TAG, "normal");
+      enterMain();
+    }
   }
 
 }
