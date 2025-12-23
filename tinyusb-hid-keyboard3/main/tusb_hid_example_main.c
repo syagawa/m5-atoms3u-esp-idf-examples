@@ -42,7 +42,9 @@ void app_main(void)
         if (tud_mounted()) {
             static bool send_hid_data = true;
             if (send_hid_data) {
-                app_send_hid_demo();
+                // app_send_hid_demo();
+                usb_hid_print_string("User: ESP32-S3!\nPassword: Admin_123_|\\\n12345^~-=/?/.>,<_,______");
+
             }
             send_hid_data = !gpio_get_level(APP_BUTTON);
         }
