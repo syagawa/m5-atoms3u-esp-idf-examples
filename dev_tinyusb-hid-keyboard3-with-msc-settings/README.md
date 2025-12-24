@@ -99,6 +99,11 @@ esptool.py --chip esp32s3 --port COM3 erase_region 0x110000 0x100000
 esptool.py --chip esp32s3 --port /dev/ttyACM0 erase_region 0x110000 0x6F0000
 ```
 
+## hid settings
+
+idf.py menuconfig under Component config > TinyUSB Stack > Human Interface Device Class (HID), setting TINYUSB_HID_COUNT to a value greater than 0 will enable TinyUSB HID.
+
+
 ## errors
 
 * Error: device reports readiness to read but returned no data (device disconnected or multiple access on port?)
