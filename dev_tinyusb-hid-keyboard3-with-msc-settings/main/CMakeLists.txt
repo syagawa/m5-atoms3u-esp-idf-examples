@@ -12,4 +12,3 @@ idf_component_register(
 #     INCLUDE_DIRS ../components
 #     PRIV_REQUIRES fatfs wear_levelling esp_partition
 # )
-
