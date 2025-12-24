@@ -31,6 +31,7 @@
 #include "cJSON.h"
 
 #include "led.h"
+#include "keyboard.h"
 #include "button.h"
 #include "storage.h"
 #include "app.h"

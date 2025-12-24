@@ -98,15 +98,14 @@ static void button_double_click_cb(void *arg,void *usr_data){
     int num = iot_button_get_repeat((button_handle_t)arg);
     ESP_LOGI(TAG, "Click count: %d", num);
 
-    if(num == 2){
-      if(bootmode == 1){
-        esp_restart();
-      }
-      if(isBootModeMain() && completedFirstWait == 1 && doubleClickAction != NULL){
-        doubleClickAction();
-      }
-
-    }
+    // if(num == 2){
+    //   if(bootmode == 1){
+    //     esp_restart();
+    //   }
+    //   if(isBootModeMain() && completedFirstWait == 1 && doubleClickAction != NULL){
+    //     doubleClickAction();
+    //   }
+    // }P32-S3!
 }
 
 
@@ -134,6 +133,7 @@ static void initButton(void) {
   if (gpio_btn == NULL) {
     ESP_LOGE(TAG, "Button create failed");
   }
+  // iot_button_register_cb(gpio_btn, BUTTON_SINGLE_CLICK, button_km_cb,NULL);
   iot_button_register_cb(gpio_btn, BUTTON_SINGLE_CLICK, button_single_click_cb,NULL);
   iot_button_register_cb(gpio_btn, BUTTON_LONG_PRESS_START, button_long_press_cb, NULL);
   iot_button_register_cb(gpio_btn, BUTTON_DOUBLE_CLICK, button_double_click_cb, NULL);
