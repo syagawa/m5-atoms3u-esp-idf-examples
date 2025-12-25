@@ -184,8 +184,9 @@ cJSON * getSettings(){
 }
 
 char * getSettingByKey(char * targetkey){
-
+    ESP_LOGI(TAG, "in getSettingByKey0");
     cJSON * obj = getSettings();
+    ESP_LOGI(TAG, "in getSettingByKey1");
     char * value = "";
     if(obj != NULL){
       // Iteratively check for existing keys
@@ -216,8 +217,9 @@ char * getSettingByKey(char * targetkey){
 }
 
 void startSettingsMode(){
-
+    ESP_LOGI(TAG, "in startSettingsMode0");
     cJSON * obj = getSettings();
+    ESP_LOGI(TAG, "in startSettingsMode1");
 
     char * settings_mode = "storage";//stprage, web
     if(obj != NULL){

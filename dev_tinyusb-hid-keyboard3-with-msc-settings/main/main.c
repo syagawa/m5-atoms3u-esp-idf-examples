@@ -73,7 +73,7 @@ void enterSettingsMode(){
 }
 
 void enterMain(){
-  setApp();
+  // setApp();
   while(1){
     appInLoop();
     vTaskDelay(1);
@@ -96,12 +96,13 @@ void app_main(void){
     ESP_LOGI(TAG, "after enterSettingsMode");
     // settings mode
   }else{
-    initButton();
+    // initButton();
     if(isButtonPressed()){
       // lightLed("orange");
       ESP_LOGI(TAG, "pressed1");
       esp_restart();
     }else{
+      initButtonForKeyboard();
       initLed();
       lightLed("red");
       ESP_LOGI(TAG, "normal");
