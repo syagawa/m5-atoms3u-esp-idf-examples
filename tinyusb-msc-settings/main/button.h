@@ -110,6 +110,11 @@ static void button_double_click_cb(void *arg,void *usr_data){
 }
 
 
+bool isButtonPressed(void){
+  return gpio_get_level(41) == 0;
+}
+
+
 
 static void initButton(void) {
   // create gpio button

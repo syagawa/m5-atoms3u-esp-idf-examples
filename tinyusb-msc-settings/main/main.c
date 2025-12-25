@@ -72,26 +72,59 @@ void enterSettingsMode(){
 }
 
 void enterMain(){
-  setApp();
+  // setApp();
   while(1){
     appInLoop();
     vTaskDelay(1);
   }
 }
 
+// void app_main(void){
+
+//     initButton();
+//     initLed();
+//     initSettings(versionStr, initialDataStr);
+
+//     firstWait(3);
+//     ESP_LOGI(TAG, "bootmode %d", getBootMode());
+
+//     if(isBootModeSettings()){
+//       enterSettingsMode();
+//     }else{
+//       enterMain();
+//     }
+
+// }
+
+
 void app_main(void){
 
-    initButton();
+  esp_reset_reason_t reason = esp_reset_reason();
+
+  // initButton();
+
+  if(reason == 3){
+    ESP_LOGI(TAG, "restarted esp");
     initLed();
+    lightLed("green");
     initSettings(versionStr, initialDataStr);
-
-    firstWait(3);
-    ESP_LOGI(TAG, "bootmode %d", getBootMode());
-
-    if(isBootModeSettings()){
-      enterSettingsMode();
+    ESP_LOGI(TAG, "after initSettings");
+    enterSettingsMode();
+    ESP_LOGI(TAG, "after enterSettingsMode");
+    // settings mode
+  }else{
+    // initButton();
+    if(isButtonPressed()){
+      // lightLed("orange");
+      ESP_LOGI(TAG, "pressed1");
+      esp_restart();
     }else{
+      initLed();
+      lightLed("red");
+      ESP_LOGI(TAG, "normal");
       enterMain();
     }
+  }
 
 }
+
