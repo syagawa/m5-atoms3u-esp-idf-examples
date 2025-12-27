@@ -110,6 +110,7 @@ static void button_double_click_cb(void *arg,void *usr_data){
 
 
 bool isButtonPressed(void){
+  ESP_LOGI(TAG, "in isButtonPressed");
   return gpio_get_level(gpioBtnNum) == 0;
 }
 

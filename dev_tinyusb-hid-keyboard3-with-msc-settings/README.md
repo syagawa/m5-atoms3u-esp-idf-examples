@@ -103,7 +103,7 @@ esptool.py --chip esp32s3 --port /dev/ttyACM0 erase_region 0x110000 0x6F0000
 
 idf.py menuconfig under Component config > TinyUSB Stack > Human Interface Device Class (HID), setting TINYUSB_HID_COUNT to a value greater than 0 will enable TinyUSB HID.
 
-## reset
+## reset build
 
 idf.py fullclean
 idf.py build flash monitor
@@ -116,4 +116,8 @@ Serial flasher config  > Flash size > 8MB
 ## errors
 
 * Error: device reports readiness to read but returned no data (device disconnected or multiple access on port?)
+
+* Saved PC:0x40379836
+    -- 0x40379836: esp_cpu_wait_for_intr at /opt/esp/idf/components/esp_hw_support/cpu.c:145
+  `not an error`
 
