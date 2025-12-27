@@ -7,7 +7,6 @@
 
 static const char *TAG_LED = "example_main_led";
 
-static uint8_t s_led_state = 0;
 static led_strip_handle_t led_strip;
 
 void showColorOrigin(char* color, float brightness) {

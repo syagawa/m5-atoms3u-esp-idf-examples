@@ -1,18 +1,18 @@
 
 #ifndef STORAGE_H
 #define STORAGE_H
-#include "tinyusb.h"
-#include "tusb_msc_storage.h"
-#include "tusb_cdc_acm.h"
+// #include "tinyusb.h"
+// #include "tusb_msc_storage.h"
+// #include "tusb_cdc_acm.h"
 
-#include "esp_log.h"
-#include "sdkconfig.h"
+// #include "esp_log.h"
+// #include "sdkconfig.h"
 
-#include <stdlib.h>
-#include <time.h>
-#include <string.h>
+// #include <stdlib.h>
+// #include <time.h>
+// #include <string.h>
 
-#include "cJSON.h"
+// #include "cJSON.h"
 
 
 #define BASE_PATH "/usb" // base path to mount the partition
@@ -81,34 +81,6 @@ static void removeFiles(void){
     remove(file_path);
 }
 
-// can not reset settings
-static void resetSettings(char * initialDataStr) {
-
-    tusb_cdc_acm_deinit(1);
-
-    struct stat s = {0};
-    bool directory_exists = stat(directory, &s) == 0;
-    if (!directory_exists) {
-        if (mkdir(directory, 0775) != 0) {
-            ESP_LOGE(TAG, "mkdir failed with errno: %s", strerror(errno));
-            return;
-        }
-    }
-
-    
-    removeFiles();
-
-    ESP_LOGI(TAG, "Creating file 1");
-    FILE *f1 = fopen(file_path, "w");
-    if (f1 == NULL) {
-        ESP_LOGE(TAG, "Failed to open file for writing");
-        // return;
-    }
-    // fprintf(f, "Hello World!\n");
-    fprintf(f1, initialDataStr);
-    fclose(f1);
-
-}
 
 void initSettings(char * version, char * initialDataStr){
 

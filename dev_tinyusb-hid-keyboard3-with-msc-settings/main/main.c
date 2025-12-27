@@ -38,32 +38,32 @@
 
 
 
-void firstWait(int sec){
+// void firstWait(int sec){
 
-  int delayMS = 10;
-  int ms = 1000;
-  int waitMS = sec * ms;
+//   int delayMS = 10;
+//   int ms = 1000;
+//   int waitMS = sec * ms;
 
-  TickType_t waitStartTime = xTaskGetTickCount();
+//   TickType_t waitStartTime = xTaskGetTickCount();
 
-  ESP_LOGI(TAG, "firstWait0 %ld", xTaskGetTickCount());
+//   ESP_LOGI(TAG, "firstWait0 %ld", xTaskGetTickCount());
 
-  while((xTaskGetTickCount() - waitStartTime) <= pdMS_TO_TICKS(waitMS)){
+//   while((xTaskGetTickCount() - waitStartTime) <= pdMS_TO_TICKS(waitMS)){
 
-    if(pushedBtnLong == 1){
-      setButtonLongPressInited();
-      setBootModeSettings();
-      ESP_LOGI(TAG, "firstWait1 %ld", xTaskGetTickCount());
-      break;
-    }
-    vTaskDelay(delayMS / portTICK_PERIOD_MS);
+//     if(pushedBtnLong == 1){
+//       setButtonLongPressInited();
+//       setBootModeSettings();
+//       ESP_LOGI(TAG, "firstWait1 %ld", xTaskGetTickCount());
+//       break;
+//     }
+//     vTaskDelay(delayMS / portTICK_PERIOD_MS);
 
-  }
+//   }
 
-  ESP_LOGI(TAG, "firstWait2 %ld", xTaskGetTickCount());
+//   ESP_LOGI(TAG, "firstWait2 %ld", xTaskGetTickCount());
 
-  setCompletedFirstWait();
-}
+//   setCompletedFirstWait();
+// }
 
 
 
