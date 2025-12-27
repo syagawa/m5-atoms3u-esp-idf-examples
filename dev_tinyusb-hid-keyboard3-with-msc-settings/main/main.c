@@ -103,7 +103,7 @@ void app_main(void){
     }else{
       initButtonForKeyboard();
       initLed();
-      lightLed("red");
+      lightLed("CYAN");
       ESP_LOGI(TAG, "normal");
       enterMain();
     }

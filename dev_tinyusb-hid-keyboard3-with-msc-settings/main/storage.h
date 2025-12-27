@@ -28,6 +28,36 @@ const char *file_path_version = "/usb/esp/version.txt";
 static const char * readmeStr = "Reset Settings: Delete settings.txt and remove this USB from PC.";
 const char *file_path_readme = "/usb/esp/readme.txt";
 
+static const tusb_desc_device_t msc_device_descriptor = {
+    .bLength            = sizeof(tusb_desc_device_t),
+    .bDescriptorType    = TUSB_DESC_DEVICE,
+    .bcdUSB             = 0x0200,
+    .bDeviceClass       = 0x00,        // 0x00 (MSCはインターフェースで指定)
+    .bDeviceSubClass    = 0x00,
+    .bDeviceProtocol    = 0x00,
+    .bMaxPacketSize0    = CFG_TUD_ENDPOINT0_SIZE,
+    .idVendor           = 0x303A,
+    .idProduct          = 0x4002,      // MSC用とわかるID（HIDとは変える）
+    .bcdDevice          = 0x0100,
+    .iManufacturer      = 0x01,
+    .iProduct           = 0x02,
+    .iSerialNumber      = 0x03,
+    .bNumConfigurations = 0x01
+};
+
+static const uint8_t msc_configuration_descriptor[] = {
+    // 構成記述子のヘッダー (Configuration Descriptor)
+    0x09, 0x02, 0x20, 0x00, 0x01, 0x01, 0x00, 0xC0, 0x32,
+
+    // インターフェース記述子 (Interface Descriptor)
+    0x09, 0x04, 0x00, 0x00, 0x02, 0x08, 0x06, 0x50, 0x00,
+
+    // エンドポイント記述子 (Bulk In)
+    0x07, 0x05, 0x81, 0x02, 0x40, 0x00, 0x00,
+
+    // エンドポイント記述子 (Bulk Out)
+    0x07, 0x05, 0x02, 0x02, 0x40, 0x00, 0x00
+};
 
 void tinyusb_cdc_rx_callback(int itf, cdcacm_event_t *event)
 {
@@ -223,12 +253,15 @@ void startSettingsMode(){
 
       ESP_LOGI(TAG, "USB Composite initialization");
       const tinyusb_config_t tusb_cfg = {
-          .device_descriptor = NULL,
+        //   .device_descriptor = NULL,
+          .device_descriptor = &msc_device_descriptor,
           .string_descriptor = NULL,
           .string_descriptor_count = 0,
           .external_phy = false,
-          .configuration_descriptor = NULL,
+        //   .configuration_descriptor = NULL,
+          .configuration_descriptor = msc_configuration_descriptor,
       };
+      showColorWithBrightness("purple", 0.1);
       ESP_ERROR_CHECK(tinyusb_driver_install(&tusb_cfg));
 
       tinyusb_config_cdcacm_t acm_cfg = {
@@ -240,6 +273,8 @@ void startSettingsMode(){
           .callback_line_state_changed = NULL,
           .callback_line_coding_changed = NULL
       };
+      showColorWithBrightness("red", 0.1);
+
       ESP_ERROR_CHECK(tusb_cdc_acm_init(&acm_cfg));
       /* the second way to register a callback */
       ESP_ERROR_CHECK(tinyusb_cdcacm_register_callback(
