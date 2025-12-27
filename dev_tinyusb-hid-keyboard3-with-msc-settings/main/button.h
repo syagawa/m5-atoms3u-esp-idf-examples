@@ -121,6 +121,31 @@ bool isButtonPressed(void){
 // }
 
 static void initButtonForKeyboard(void) {
+
+
+    const gpio_config_t boot_button_config = {
+        .pin_bit_mask = BIT64(gpioBtnNum),
+        .mode = GPIO_MODE_INPUT,
+        .intr_type = GPIO_INTR_DISABLE,
+        .pull_up_en = true,
+        .pull_down_en = false,
+    };
+    ESP_ERROR_CHECK(gpio_config(&boot_button_config));
+
+    ESP_LOGI(TAG, "USB initialization");
+    const tinyusb_config_t tusb_cfg = {
+        .device_descriptor = NULL,
+        .string_descriptor = hid_string_descriptor,
+        .string_descriptor_count = sizeof(hid_string_descriptor) / sizeof(hid_string_descriptor[0]),
+        .external_phy = false,
+        .configuration_descriptor = hid_configuration_descriptor,
+    };
+
+    ESP_ERROR_CHECK(tinyusb_driver_install(&tusb_cfg));
+    ESP_LOGI(TAG, "USB initialization DONE");
+
+
+
   // create gpio button
   button_config_t gpio_btn_cfg = {
     .type = BUTTON_TYPE_GPIO,

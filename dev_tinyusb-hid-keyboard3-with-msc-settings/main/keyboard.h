@@ -210,25 +210,45 @@ static void ascii_to_hid_with_modifier(char c, uint8_t *keycode, uint8_t *modifi
 
 
 void usb_hid_print_string(const char *str) {
-     for (int i = 0; str[i] != '\0'; i++) {
-         uint8_t keycode = 0;
-         uint8_t modifier = 0;
+    ESP_LOGI(TAG_K, "in usb_hid_print_string0");
 
-         ascii_to_hid_with_modifier(str[i], &keycode, &modifier);
+    if (tud_hid_ready()) {
+        ESP_LOGW(TAG_K, "HID is ready");
+    } else {
+        ESP_LOGW(TAG_K, "HID not ready");
+    }
+    if (tud_mounted()) {
+        ESP_LOGW(TAG_K, "tud is mounted");
+    } else {
+        ESP_LOGW(TAG_K, "tud is not mounted");
+    }
 
-         if (keycode != 0) {
-             uint8_t key_report[6] = {keycode, 0, 0, 0, 0, 0};
+
+    for (int i = 0; str[i] != '\0'; i++) {
+        ESP_LOGI(TAG_K, "in usb_hid_print_string1");
+
+        uint8_t keycode = 0;
+        uint8_t modifier = 0;
+
+        ascii_to_hid_with_modifier(str[i], &keycode, &modifier);
+        ESP_LOGI(TAG_K, "in usb_hid_print_string2");
+        if (keycode != 0) {
+            ESP_LOGI(TAG_K, "in usb_hid_print_string3");
+            uint8_t key_report[6] = {keycode, 0, 0, 0, 0, 0};
             //  uint8_t key_report[8] = {0x02, 0, keycode, 0, 0, 0, 0, 0};
-
+            ESP_LOGI(TAG_K, "in usb_hid_print_string4");
             // キーを押す
             tud_hid_keyboard_report(REPORT_ID_KEYBOARD, modifier, key_report);
             vTaskDelay(pdMS_TO_TICKS(15));
-
+            ESP_LOGI(TAG_K, "in usb_hid_print_string5");
             // キーを離す
             tud_hid_keyboard_report(1, 0, NULL);
             vTaskDelay(pdMS_TO_TICKS(15));
+            ESP_LOGI(TAG_K, "in usb_hid_print_string6");
+
          }
-     }
+    }
+    ESP_LOGI(TAG_K, "in usb_hid_print_string00 end");
 }
 
 static void button_km_cb(void *arg, void *arg2) {

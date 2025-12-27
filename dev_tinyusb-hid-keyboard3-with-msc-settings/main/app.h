@@ -38,6 +38,18 @@ void setApp(){
 
 void appInLoop(){
     // write logic in loop
+
+  // if (tud_mounted()) {
+  //     static bool send_hid_data = false;
+  //     send_hid_data = !gpio_get_level(APP_BUTTON);
+  //     if (send_hid_data) {
+  //         usb_hid_print_string("User: ESP32-S3!\nPassword: Admin_123_|\\\n12345^~-=/?/.>,<_,______");
+
+  //     }
+  // }
+  // vTaskDelay(pdMS_TO_TICKS(100));
+
+
 }
 
 #endif // APP_H
