@@ -34,8 +34,10 @@
 #include "keyboard.h"
 #include "button.h"
 #include "storage.h"
-#include "app.h"
+// #include "app.h"
 
+const char * initialDataStr = "{\"settings_mode\": \"storage\", \"color\": \"red\"}";
+const char * versionStr = "tinyusb-msc-settings-1.2.0";
 
 // void firstWait(int sec){
 
@@ -72,11 +74,39 @@ void enterSettingsMode(){
 }
 
 void enterMain(){
-  setApp();
+  initSettings(versionStr, initialDataStr);
+
+  char * color = getSettingByKey("color");
+  setButtonColor(color);
+
   while(1){
-    appInLoop();
-    // vTaskDelay(1);
-    // vTaskDelay(pdMS_TO_TICKS(20));
+    if(buttonIsLongPressed){
+
+      // char str[12];
+      // snprintf(str, sizeof(str), "%d", pressedCount);
+      // usb_hid_print_string("long");
+      // usb_hid_print_string(str);
+
+      if(pressedCount == 1){
+        lightLed("yellow");
+      }else if (pressedCount% 2 == 0 ) {
+        lightLed("purple");
+      }else{
+        lightLed("green");
+      }
+
+      checkAndIncrementCount();
+    }
+
+    // if (tud_mounted()) {
+    //     static bool send_hid_data = false;
+    //     send_hid_data = !gpio_get_level(APP_BUTTON);
+    //     if (send_hid_data) {
+    //         usb_hid_print_string("User: ESP32-S3!\nPassword: Admin_123_|\\\n12345^~-=/?/.>,<_,______");
+
+    //     }
+    // }
+    vTaskDelay(pdMS_TO_TICKS(100));
   }
 }
 

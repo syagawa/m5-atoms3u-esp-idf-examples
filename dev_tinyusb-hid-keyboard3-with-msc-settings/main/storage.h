@@ -122,7 +122,7 @@ void initSettings(char * version, char * initialDataStr){
     };
     ESP_ERROR_CHECK(tinyusb_msc_storage_init_spiflash(&config_spi));
     ESP_ERROR_CHECK(tinyusb_msc_storage_mount(BASE_PATH));
-
+    
     struct stat s = {0};
     bool directory_exists = stat(directory, &s) == 0;
     if (!directory_exists) {
@@ -130,7 +130,7 @@ void initSettings(char * version, char * initialDataStr){
             ESP_LOGE(TAG, "mkdir failed with errno: %s", strerror(errno));
         }
     }
-
+    
     if (!file_exists(file_path)) {
         // ここでコケる ストレージをクリアすればいける？
         ESP_LOGI(TAG, "Creating file 0");
@@ -158,30 +158,41 @@ void initSettings(char * version, char * initialDataStr){
 }
 
 cJSON * getSettings(){
-    FILE *f;
-    ESP_LOGI(TAG, "Reading file");
-    f = fopen(file_path, "r");
-    if (f == NULL) {
-        ESP_LOGE(TAG, "Failed to open file for reading");
-    }
-    char line[64];
-    fgets(line, sizeof(line), f);
+  FILE *f;
+  ESP_LOGI(TAG, "Reading file");
+  f = fopen(file_path, "r");
+  if (f == NULL) {
+    ESP_LOGE(TAG, "Failed to open file for reading");
+    lightLed("green");
+    return NULL;
+  }
+  
+  char line[128];
+  if(fgets(line, sizeof(line), f) == NULL){
     fclose(f);
-    // strip newline
-    char *pos = strchr(line, '\n');
-    if (pos) {
-        *pos = '\0';
-    }
-    ESP_LOGI(TAG, "Read from file: '%s'", line);
+    lightLed("red");
+    return NULL;
+  }
+  fclose(f);
+  lightLed("blue");
+  // strip newline
+  char *pos = strchr(line, '\n');
+  if (pos) {
+      *pos = '\0';
+  }
+  ESP_LOGI(TAG, "Read from file: '%s'", line);
 
-    char * str = strdup(line);
-    // strdupを使用している場合、必要に応じてfree(str);を呼び出してメモリを解放する必要があります
+  char * str = strdup(line);
+  // strdupを使用している場合、必要に応じてfree(str);を呼び出してメモリを解放する必要があります
 
-    ESP_LOGI(TAG, "json_str '%s'", str);
-    cJSON * obj = cJSON_Parse(str);
-    free(str);
+  ESP_LOGI(TAG, "json_str '%s'", str);
+  cJSON * obj = cJSON_Parse(str);
+  if(obj == NULL){
+    lightLed("purple");
+  }
+  free(str);
 
-    return obj;
+  return obj;
 
 }
 

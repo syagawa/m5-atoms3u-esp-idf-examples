@@ -47,7 +47,7 @@ static void button_long_cb(void *arg, void *data) {
 static void button_press_up_cb(void *arg, void *data)
 {
   // ESP_LOGI(TAG, "button_press_up_cb");
-  lightLed("blue");
+  // lightLed("blue");
   // usb_hid_print_string("up");
   // press_count = 0;
   resetCount();
