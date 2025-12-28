@@ -74,13 +74,16 @@ void showColor(char* color){
 }
 
 static void lightLed(char* color) {
-    led_strip_clear(led_strip);
-    showColor(color);
-    led_strip_refresh(led_strip);
+  led_strip_clear(led_strip);
+  showColor(color);
+  led_strip_refresh(led_strip);
 }
 
-static void initLed(void)
-{
+static void offLed(){
+  led_strip_clear(led_strip);
+}
+
+static void initLed(void) {
     ESP_LOGI(TAG_LED, "Example configured to blink addressable LED!");
     /* LED strip initialization with the GPIO and pixels number*/
     led_strip_config_t strip_config = {

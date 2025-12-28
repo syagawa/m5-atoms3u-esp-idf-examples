@@ -49,8 +49,8 @@ const char * versionStr = "tinyusb-msc-settings-1.2.0";
 int keyIndex = 0;
 char *keys[MaxLength];
 int array_keys_count = 0;
-// const char *colors[] = {"RED", "BLUE", "MAGENTA", "GREEN", "PINK", "YELLOW", "SKYBLUE", "BROWN", "PURPLE"};
-const char *colors[] = {"RED", "MAGENTA", "PINK", "YELLOW", "BROWN", "PURPLE"};
+const char *colors[] = {"RED", "BLUE", "MAGENTA", "GREEN", "PINK", "YELLOW", "SKYBLUE", "BROWN", "PURPLE"};
+// const char *colors[] = {"RED", "MAGENTA", "PINK", "YELLOW", "BROWN", "PURPLE"};
 const int colorsLength = sizeof(colors) / sizeof(colors[0]);
 int colorIndex = -1;
 
@@ -62,24 +62,40 @@ static void setIndex(int c) {
   keyIndex = c;
   if(keyIndex >= array_keys_count){
     keyIndex = 0;
+    pressedCount = 0;
     colorIndex = -1;
   }else{
-    colorIndex = c % colorsLength;
+    colorIndex = keyIndex % colorsLength;
   }
+
+  // if(keyIndex == 0){
+  //   lightLed("red");
+  // }else if (keyIndex == 1){
+  //   lightLed("green");
+  // }else if (keyIndex == 2){
+  //   lightLed("orange");
+
+  // }else if (keyIndex == 3){
+  //   lightLed("blue");
+  // }else{
+  //   lightLed("white");
+  // }
+
+
 }
 
 static void startCount() {
   buttonIsLongPressed = true;
   lastIncrementTime = xTaskGetTickCount();
-  pressedCount = 1;
+  pressedCount++;
   setIndex(pressedCount);
 }
 
-static void resetCount(){
-  buttonIsLongPressed = false;
-  pressedCount = 0;
-  setIndex(pressedCount);
-}
+// static void resetCount(){
+//   buttonIsLongPressed = false;
+//   // pressedCount = 0;
+//   // setIndex(pressedCount);
+// }
 static void incrementCount(){
   pressedCount++;
   setIndex(pressedCount);
@@ -97,6 +113,7 @@ static void checkAndSetColor() {
 
   if(colorIndex == -1){
     // lightLed("CYAN");
+    offLed();
     return;
   }
 
@@ -116,7 +133,7 @@ static void action1(void *arg,void *usr_data) {
   incrementCount();
 }
 static void action2(void *arg, void *data) {
-  resetCount();
+  buttonIsLongPressed = false;
 }
 
 static void action3(void *arg, void *data) {
@@ -160,36 +177,26 @@ void enterMain(){
     }
     // ESP_LOGI(TAG, "Successfully loaded %d keys from JSON", array_keys_count);
   }
+  // if(array_keys_count == 0){
+  //   lightLed("red");
+  // }else if (array_keys_count == 1){
+  //   lightLed("green");
+  // }else if (array_keys_count == 2){
+  //   lightLed("orange");
+
+  // }else if (array_keys_count == 3){
+  //   lightLed("blue");
+  // }else{
+  //   lightLed("white");
+  // }
 
 
   while(1){
     if(buttonIsLongPressed){
-
-      // char str[12];
-      // snprintf(str, sizeof(str), "%d", pressedCount);
-      // usb_hid_print_string("long");
-      // usb_hid_print_string(str);
-      // keyIndex = pressedCount;
-      // if(pressedCount == 1){
-      //   lightLed("yellow");
-      // }else if (pressedCount% 2 == 0 ) {
-      //   lightLed("purple");
-      // }else{
-      //   lightLed("green");
-      // }
-
       checkAndIncrementCount();
     }
     checkAndSetColor();
 
-    // if (tud_mounted()) {
-    //     static bool send_hid_data = false;
-    //     send_hid_data = !gpio_get_level(APP_BUTTON);
-    //     if (send_hid_data) {
-    //         usb_hid_print_string("User: ESP32-S3!\nPassword: Admin_123_|\\\n12345^~-=/?/.>,<_,______");
-
-    //     }
-    // }
     vTaskDelay(pdMS_TO_TICKS(100));
   }
 }

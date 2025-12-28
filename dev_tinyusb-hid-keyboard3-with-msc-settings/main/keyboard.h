@@ -246,7 +246,7 @@ void usb_hid_print_string(const char *str) {
             vTaskDelay(pdMS_TO_TICKS(15));
             ESP_LOGI(TAG_K, "in usb_hid_print_string6");
 
-         }
+        }
     }
     ESP_LOGI(TAG_K, "in usb_hid_print_string00 end");
 }
