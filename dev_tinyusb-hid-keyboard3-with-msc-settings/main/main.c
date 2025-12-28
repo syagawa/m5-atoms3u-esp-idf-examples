@@ -30,6 +30,13 @@
 // #include "jsmn.h"
 #include "cJSON.h"
 
+#define waitingMS 1000
+#define GPIOButtonNumber 41
+#define MaxLength 10
+char * defaultButtonColor = "red";
+char * buttonColor = "";
+
+
 #include "led.h"
 #include "keyboard.h"
 #include "button.h"
@@ -39,32 +46,55 @@
 const char * initialDataStr = "{\"settings_mode\": \"storage\", \"color\": \"red\"}";
 const char * versionStr = "tinyusb-msc-settings-1.2.0";
 
-// void firstWait(int sec){
+int keyIndex = 0;
 
-//   int delayMS = 10;
-//   int ms = 1000;
-//   int waitMS = sec * ms;
+char *keys[MaxLength];
+int array_keys_count = 0;
 
-//   TickType_t waitStartTime = xTaskGetTickCount();
 
-//   ESP_LOGI(TAG, "firstWait0 %ld", xTaskGetTickCount());
+int pressedCount = 0;
+bool buttonIsLongPressed = false;
+TickType_t lastIncrementTime = 0;
 
-//   while((xTaskGetTickCount() - waitStartTime) <= pdMS_TO_TICKS(waitMS)){
+static void startCount() {
+  buttonIsLongPressed = true;
+  lastIncrementTime = xTaskGetTickCount();
+  pressedCount = 1;
+}
 
-//     if(pushedBtnLong == 1){
-//       setButtonLongPressInited();
-//       setBootModeSettings();
-//       ESP_LOGI(TAG, "firstWait1 %ld", xTaskGetTickCount());
-//       break;
-//     }
-//     vTaskDelay(delayMS / portTICK_PERIOD_MS);
+static void resetCount(){
+  buttonIsLongPressed = false;
+  pressedCount = 0;
+}
 
-//   }
+static void checkAndIncrementCount() {
+  TickType_t current = xTaskGetTickCount();
+  if ((current - lastIncrementTime) >= pdMS_TO_TICKS(waitingMS)){
+    pressedCount++;
+    lastIncrementTime = xTaskGetTickCount();
+  }
+}
 
-//   ESP_LOGI(TAG, "firstWait2 %ld", xTaskGetTickCount());
+static void action1(void *arg,void *usr_data) {
+    lightLed(buttonColor);
 
-//   setCompletedFirstWait();
-// }
+    // char *str = keys[keyIndex];
+    // usb_hid_print_string(str);
+
+    keyIndex++;
+    if(keyIndex >= array_keys_count){
+      keyIndex = 0;
+    }
+
+}
+static void action2(void *arg, void *data) {
+  resetCount();
+}
+
+static void action3(void *arg, void *data) {
+  ESP_LOGI(TAG, "button_long_cb %d", pressedCount);
+  startCount();
+}
 
 
 
@@ -74,10 +104,35 @@ void enterSettingsMode(){
 }
 
 void enterMain(){
+
+  singleClickAction = action1;
+  pressUpAction = action2;
+  longPressedAction = action3;
+
+
+
   initSettings(versionStr, initialDataStr);
 
   char * color = getSettingByKey("color");
   setButtonColor(color);
+
+
+
+
+
+  cJSON *json_arr = getSettingByKey("keys");
+  if (cJSON_IsArray(json_arr)) {
+      int size = cJSON_GetArraySize(json_arr);
+      for (int i = 0; i < size && i < MaxLength; i++) {
+          cJSON *item = cJSON_GetArrayItem(json_arr, i);
+          if (cJSON_IsString(item)) {
+              keys[array_keys_count] = strdup(item->valuestring);
+              array_keys_count++;
+          }
+      }
+      // ESP_LOGI(TAG, "Successfully loaded %d keys from JSON", array_keys_count);
+  }
+
 
   while(1){
     if(buttonIsLongPressed){
@@ -86,7 +141,7 @@ void enterMain(){
       // snprintf(str, sizeof(str), "%d", pressedCount);
       // usb_hid_print_string("long");
       // usb_hid_print_string(str);
-
+      keyIndex = pressedCount;
       if(pressedCount == 1){
         lightLed("yellow");
       }else if (pressedCount% 2 == 0 ) {

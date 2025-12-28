@@ -3,63 +3,62 @@
 #include "iot_button.h"
 #include "storage.h"
 
-int gpioBtnNum = 41;
-int waitingMS = 1000;
 
-int pushedBtnLong = 0;
-int waitedMS = 0;
-int buttonLongPressInited = 0;
-int completedFirstWait = 0;
+void (*singleClickAction)(void);
+void (*pressUpAction)(void);
+void (*longPressedAction)(void);
 
-float brightness_test = 1.0;
 
-char * defaultButtonColor = "red";
-char * buttonColor = "";
 
-int pressedCount = 0;
-bool buttonIsLongPressed = false;
-TickType_t lastIncrementTime = 0;
+// int pushedBtnLong = 0;
+// int waitedMS = 0;
+// int buttonLongPressInited = 0;
+// int completedFirstWait = 0;
 
-static void startCount() {
-  buttonIsLongPressed = true;
-  lastIncrementTime = xTaskGetTickCount();
-  pressedCount = 1;
-}
+// float brightness_test = 1.0;
 
-static void resetCount(){
-  buttonIsLongPressed = false;
-  pressedCount = 0;
-}
 
-static void checkAndIncrementCount() {
-  TickType_t current = xTaskGetTickCount();
-  if ((current - lastIncrementTime) >= pdMS_TO_TICKS(waitingMS)){
-    pressedCount++;
-    lastIncrementTime = xTaskGetTickCount();
-  }
-}
+// int pressedCount = 0;
+// bool buttonIsLongPressed = false;
+// TickType_t lastIncrementTime = 0;
+
+// static void startCount() {
+//   buttonIsLongPressed = true;
+//   lastIncrementTime = xTaskGetTickCount();
+//   pressedCount = 1;
+// }
+
+// static void resetCount(){
+//   buttonIsLongPressed = false;
+//   pressedCount = 0;
+// }
+
+// static void checkAndIncrementCount() {
+//   TickType_t current = xTaskGetTickCount();
+//   if ((current - lastIncrementTime) >= pdMS_TO_TICKS(waitingMS)){
+//     pressedCount++;
+//     lastIncrementTime = xTaskGetTickCount();
+//   }
+// }
 
 static void button_long_cb(void *arg, void *data) {
-  ESP_LOGI(TAG, "button_long_cb %d", pressedCount);
-  startCount();
+  longPressedAction();
 }
 
-static void button_press_up_cb(void *arg, void *data)
-{
+static void button_press_up_cb(void *arg, void *data) {
   // ESP_LOGI(TAG, "button_press_up_cb");
   // lightLed("blue");
   // usb_hid_print_string("up");
   // press_count = 0;
-  resetCount();
+  pressUpAction();
 }
 
-static void button_single_click_cb(void *arg,void *usr_data)
-{
+static void button_single_click_cb(void *arg,void *usr_data) {
     // ESP_LOGI(TAG, "BUTTON_SINGLE_CLICK");
-    lightLed(buttonColor);
+    // lightLed(buttonColor);
     // usb_hid_print_string("single");
     // usb_hid_print_string("User: ESP32-S3!\nPassword: Admin_123_|\\\n12345^~-=/?/.>,<_,______");
-
+  singleClickAction();
 }
 
 
@@ -79,7 +78,7 @@ char * getButtonColor(){
 
 bool isButtonPressed(void){
   ESP_LOGI(TAG, "in isButtonPressed");
-  return gpio_get_level(gpioBtnNum) == 0;
+  return gpio_get_level(GPIOButtonNumber) == 0;
 }
 
 
@@ -88,7 +87,7 @@ static void initButtonForKeyboard(void) {
 
 
   const gpio_config_t boot_button_config = {
-      .pin_bit_mask = BIT64(gpioBtnNum),
+      .pin_bit_mask = BIT64(GPIOButtonNumber),
       .mode = GPIO_MODE_INPUT,
       .intr_type = GPIO_INTR_DISABLE,
       .pull_up_en = true,
@@ -118,7 +117,7 @@ static void initButtonForKeyboard(void) {
     .long_press_time = waitingMS,
     .short_press_time = CONFIG_BUTTON_SHORT_PRESS_TIME_MS,
     .gpio_button_config = {
-        .gpio_num = gpioBtnNum,
+        .gpio_num = GPIOButtonNumber,
         .active_level = 0,
     },
   };
