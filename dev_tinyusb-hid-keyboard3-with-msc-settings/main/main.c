@@ -72,7 +72,7 @@ void enterSettingsMode(){
 }
 
 void enterMain(){
-  // setApp();
+  setApp();
   while(1){
     appInLoop();
     // vTaskDelay(1);

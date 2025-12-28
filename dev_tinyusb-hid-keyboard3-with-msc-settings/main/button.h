@@ -56,24 +56,12 @@ static void button_press_up_cb(void *arg, void *data)
 static void button_single_click_cb(void *arg,void *usr_data)
 {
     // ESP_LOGI(TAG, "BUTTON_SINGLE_CLICK");
-    lightLed("red");
+    lightLed(buttonColor);
     // usb_hid_print_string("single");
     // usb_hid_print_string("User: ESP32-S3!\nPassword: Admin_123_|\\\n12345^~-=/?/.>,<_,______");
 
 }
 
-// static void setButtonLongPressInited(){
-//   buttonLongPressInited = 1;
-// }
-
-// static void setBootModeSettings(){
-//   bootmode = 1;
-// }
-
-
-// static void setCompletedFirstWait(){
-//   completedFirstWait = 1;
-// }
 
 static void setButtonColor(char * color) {
   buttonColor = color;
@@ -88,31 +76,6 @@ char * getButtonColor(){
 
 
 
-// static void button_long_press_cb(void *arg,void *usr_data){
-//     ESP_LOGI(TAG, "BUTTON_LONG_PRESS_START_1");
-//     if(buttonLongPressInited == 0){
-//       pushedBtnLong = 1;
-//     }
-//     if(isBootModeMain() && completedFirstWait == 1 && longPressedAction != NULL){
-//       longPressedAction();
-//     }
-// }
-
-// static void button_double_click_cb(void *arg,void *usr_data){
-
-//     int num = iot_button_get_repeat((button_handle_t)arg);
-//     ESP_LOGI(TAG, "Click count: %d", num);
-
-//     // if(num == 2){
-//     //   if(bootmode == 1){
-//     //     esp_restart();
-//     //   }
-//     //   if(isBootModeMain() && completedFirstWait == 1 && doubleClickAction != NULL){
-//     //     doubleClickAction();
-//     //   }
-//     // }P32-S3!
-// }
-
 
 bool isButtonPressed(void){
   ESP_LOGI(TAG, "in isButtonPressed");
@@ -120,31 +83,6 @@ bool isButtonPressed(void){
 }
 
 
-// static void initButton(void) {
-//   // create gpio button
-//   button_config_t gpio_btn_cfg = {
-//     .type = BUTTON_TYPE_GPIO,
-//     // .long_press_ticks = CONFIG_BUTTON_LONG_PRESS_TIME_MS,
-//     // .long_press_ticks = CONFIG_BUTTON_LONG_PRESS_TIME_MS,
-//     // .short_press_ticks = CONFIG_BUTTON_SHORT_PRESS_TIME_MS,
-//     .long_press_time = CONFIG_BUTTON_LONG_PRESS_TIME_MS,
-//     .short_press_time = CONFIG_BUTTON_SHORT_PRESS_TIME_MS,
-//     .gpio_button_config = {
-//         .gpio_num = gpioBtnNum,
-//         .active_level = 0,
-//     },
-//   };
-
-//   button_handle_t gpio_btn = iot_button_create(&gpio_btn_cfg);
-
-//   if (gpio_btn == NULL) {
-//     ESP_LOGE(TAG, "Button create failed");
-//   }
-//   // iot_button_register_cb(gpio_btn, BUTTON_SINGLE_CLICK, button_km_cb,NULL);
-//   // iot_button_register_cb(gpio_btn, BUTTON_SINGLE_CLICK, button_single_click_cb,NULL);
-//   iot_button_register_cb(gpio_btn, BUTTON_LONG_PRESS_START, button_long_press_cb, NULL);
-//   iot_button_register_cb(gpio_btn, BUTTON_DOUBLE_CLICK, button_double_click_cb, NULL);
-// }
 
 static void initButtonForKeyboard(void) {
 
