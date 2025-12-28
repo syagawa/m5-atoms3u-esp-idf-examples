@@ -39,16 +39,20 @@ void appInLoop(){
 
   if(buttonIsLongPressed){
 
-    char str[12];
-    snprintf(str, sizeof(str), "%d", pressedCount);
-    usb_hid_print_string("long");
-    usb_hid_print_string(str);
-    if (pressedCount% 2 == 0 ) {
+    // char str[12];
+    // snprintf(str, sizeof(str), "%d", pressedCount);
+    // usb_hid_print_string("long");
+    // usb_hid_print_string(str);
+
+    if(pressedCount == 1){
+      lightLed("yellow");
+    }else if (pressedCount% 2 == 0 ) {
       lightLed("purple");
     }else{
       lightLed("green");
     }
 
+    checkAndIncrementCount();
   }
 
   // if (tud_mounted()) {
@@ -59,7 +63,7 @@ void appInLoop(){
 
   //     }
   // }
-  // vTaskDelay(pdMS_TO_TICKS(100));
+  vTaskDelay(pdMS_TO_TICKS(100));
 
 
 }

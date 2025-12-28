@@ -46,18 +46,18 @@ static void button_long_cb(void *arg, void *data) {
 
 static void button_press_up_cb(void *arg, void *data)
 {
-  ESP_LOGI(TAG, "button_press_up_cb");
+  // ESP_LOGI(TAG, "button_press_up_cb");
   lightLed("blue");
-  usb_hid_print_string("up");
+  // usb_hid_print_string("up");
   // press_count = 0;
   resetCount();
 }
 
 static void button_single_click_cb(void *arg,void *usr_data)
 {
-    ESP_LOGI(TAG, "BUTTON_SINGLE_CLICK");
+    // ESP_LOGI(TAG, "BUTTON_SINGLE_CLICK");
     lightLed("red");
-    usb_hid_print_string("single");
+    // usb_hid_print_string("single");
     // usb_hid_print_string("User: ESP32-S3!\nPassword: Admin_123_|\\\n12345^~-=/?/.>,<_,______");
 
 }
