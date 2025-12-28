@@ -163,18 +163,18 @@ cJSON * getSettings(){
   f = fopen(file_path, "r");
   if (f == NULL) {
     ESP_LOGE(TAG, "Failed to open file for reading");
-    lightLed("green");
+    // lightLed("green");
     return NULL;
   }
   
   char line[128];
   if(fgets(line, sizeof(line), f) == NULL){
     fclose(f);
-    lightLed("red");
+    // lightLed("red");
     return NULL;
   }
   fclose(f);
-  lightLed("blue");
+  // lightLed("blue");
   // strip newline
   char *pos = strchr(line, '\n');
   if (pos) {
@@ -188,7 +188,7 @@ cJSON * getSettings(){
   ESP_LOGI(TAG, "json_str '%s'", str);
   cJSON * obj = cJSON_Parse(str);
   if(obj == NULL){
-    lightLed("purple");
+    // lightLed("purple");
   }
   free(str);
 
@@ -227,6 +227,22 @@ char * getSettingByKey(char * targetkey){
     return value;
 
 
+}
+
+cJSON * getSettingArrayAsJSONByKey(char * targetkey) {
+    cJSON * obj = getSettings(); // ファイルから読み込んでParseした全体
+    if (obj == NULL) return NULL;
+
+    cJSON *target_elm = cJSON_GetObjectItemCaseSensitive(obj, targetkey);
+    
+    cJSON *result = NULL;
+    if (cJSON_IsArray(target_elm)) {
+        // 重要：元のobjを消してもいいように、配列部分だけを「複製」する
+        result = cJSON_Duplicate(target_elm, true);
+    }
+
+    cJSON_Delete(obj); // 全体のメモリはここで解放
+    return result;     // 複製した配列だけを返す
 }
 
 void startSettingsMode(){

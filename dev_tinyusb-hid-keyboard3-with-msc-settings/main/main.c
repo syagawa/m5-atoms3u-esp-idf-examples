@@ -47,45 +47,73 @@ const char * initialDataStr = "{\"settings_mode\": \"storage\", \"color\": \"red
 const char * versionStr = "tinyusb-msc-settings-1.2.0";
 
 int keyIndex = 0;
-
 char *keys[MaxLength];
 int array_keys_count = 0;
-
+// const char *colors[] = {"RED", "BLUE", "MAGENTA", "GREEN", "PINK", "YELLOW", "SKYBLUE", "BROWN", "PURPLE"};
+const char *colors[] = {"RED", "MAGENTA", "PINK", "YELLOW", "BROWN", "PURPLE"};
+const int colorsLength = sizeof(colors) / sizeof(colors[0]);
+int colorIndex = -1;
 
 int pressedCount = 0;
 bool buttonIsLongPressed = false;
 TickType_t lastIncrementTime = 0;
 
+static void setIndex(int c) {
+  keyIndex = c;
+  if(keyIndex >= array_keys_count){
+    keyIndex = 0;
+    colorIndex = -1;
+  }else{
+    colorIndex = c % colorsLength;
+  }
+}
+
 static void startCount() {
   buttonIsLongPressed = true;
   lastIncrementTime = xTaskGetTickCount();
   pressedCount = 1;
+  setIndex(pressedCount);
 }
 
 static void resetCount(){
   buttonIsLongPressed = false;
   pressedCount = 0;
+  setIndex(pressedCount);
+}
+static void incrementCount(){
+  pressedCount++;
+  setIndex(pressedCount);
 }
 
 static void checkAndIncrementCount() {
   TickType_t current = xTaskGetTickCount();
   if ((current - lastIncrementTime) >= pdMS_TO_TICKS(waitingMS)){
-    pressedCount++;
+    incrementCount();
     lastIncrementTime = xTaskGetTickCount();
   }
 }
 
+static void checkAndSetColor() {
+
+  if(colorIndex == -1){
+    // lightLed("CYAN");
+    return;
+  }
+
+  char *s = colors[colorIndex];
+  // lightLed("GREEN");
+  lightLed(s);
+}
+
+
+
 static void action1(void *arg,void *usr_data) {
-    lightLed(buttonColor);
+  // lightLed(buttonColor);
 
-    // char *str = keys[keyIndex];
-    // usb_hid_print_string(str);
+  char *str = keys[keyIndex];
+  usb_hid_print_string(str);
 
-    keyIndex++;
-    if(keyIndex >= array_keys_count){
-      keyIndex = 0;
-    }
-
+  incrementCount();
 }
 static void action2(void *arg, void *data) {
   resetCount();
@@ -110,27 +138,27 @@ void enterMain(){
   longPressedAction = action3;
 
 
-
   initSettings(versionStr, initialDataStr);
 
-  char * color = getSettingByKey("color");
-  setButtonColor(color);
+  // char * color = getSettingByKey("color");
+  // setButtonColor(color);
 
-
-
-
-
-  cJSON *json_arr = getSettingByKey("keys");
+  cJSON *json_arr = getSettingArrayAsJSONByKey("keys");
+  // lightLed("red");
   if (cJSON_IsArray(json_arr)) {
-      int size = cJSON_GetArraySize(json_arr);
-      for (int i = 0; i < size && i < MaxLength; i++) {
-          cJSON *item = cJSON_GetArrayItem(json_arr, i);
-          if (cJSON_IsString(item)) {
-              keys[array_keys_count] = strdup(item->valuestring);
-              array_keys_count++;
-          }
-      }
-      // ESP_LOGI(TAG, "Successfully loaded %d keys from JSON", array_keys_count);
+  
+    int size = cJSON_GetArraySize(json_arr);
+    // lightLed("green");
+    for (int i = 0; i < size && i < MaxLength; i++) {
+        
+        cJSON *item = cJSON_GetArrayItem(json_arr, i);
+        if (cJSON_IsString(item)) {
+          // lightLed("orange");
+          keys[array_keys_count] = strdup(item->valuestring);
+          array_keys_count++;
+        }
+    }
+    // ESP_LOGI(TAG, "Successfully loaded %d keys from JSON", array_keys_count);
   }
 
 
@@ -141,17 +169,18 @@ void enterMain(){
       // snprintf(str, sizeof(str), "%d", pressedCount);
       // usb_hid_print_string("long");
       // usb_hid_print_string(str);
-      keyIndex = pressedCount;
-      if(pressedCount == 1){
-        lightLed("yellow");
-      }else if (pressedCount% 2 == 0 ) {
-        lightLed("purple");
-      }else{
-        lightLed("green");
-      }
+      // keyIndex = pressedCount;
+      // if(pressedCount == 1){
+      //   lightLed("yellow");
+      // }else if (pressedCount% 2 == 0 ) {
+      //   lightLed("purple");
+      // }else{
+      //   lightLed("green");
+      // }
 
       checkAndIncrementCount();
     }
+    checkAndSetColor();
 
     // if (tud_mounted()) {
     //     static bool send_hid_data = false;
@@ -189,7 +218,7 @@ void app_main(void){
     }else{
       initButtonForKeyboard();
       initLed();
-      lightLed("CYAN");
+      // lightLed("CYAN");
       ESP_LOGI(TAG, "normal");
       enterMain();
     }
