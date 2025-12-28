@@ -16,10 +16,43 @@ float brightness_test = 1.0;
 char * defaultButtonColor = "red";
 char * buttonColor = "";
 
+int press_count = 0;
+
 void (*singleClickAction)(void);
 void (*doubleClickAction)(void);
 void (*longPressedAction)(void);
 
+static void button_long_cb(void *arg, void *data) {
+    press_count++;
+
+    ESP_LOGI(TAG, "button_long_cb %d", press_count);
+    char str[12];
+    snprintf(str, sizeof(str), "%d", press_count);
+    usb_hid_print_string("long");
+    usb_hid_print_string(str);
+    if (press_count% 2 == 0 ) {
+      lightLed("purple");
+    }else{
+      lightLed("green");
+    }
+}
+
+static void button_press_up_cb(void *arg, void *data)
+{
+    ESP_LOGI(TAG, "button_press_up_cb");
+    lightLed("blue");
+    usb_hid_print_string("up");
+    // press_count = 0;
+}
+
+static void button_single_click_cb(void *arg,void *usr_data)
+{
+    ESP_LOGI(TAG, "BUTTON_SINGLE_CLICK");
+    lightLed("red");
+    usb_hid_print_string("single");
+    // usb_hid_print_string("User: ESP32-S3!\nPassword: Admin_123_|\\\n12345^~-=/?/.>,<_,______");
+
+}
 
 // static void setButtonLongPressInited(){
 //   buttonLongPressInited = 1;
@@ -46,21 +79,6 @@ char * getButtonColor(){
 }
 
 
-// static void button_single_click_cb(void *arg,void *usr_data)
-// {
-//     ESP_LOGI(TAG, "BUTTON_SINGLE_CLICK");
-//     ESP_LOGI(TAG, "Turning the LED %s!", s_led_state == true ? "ON" : "OFF");
-
-//     ESP_LOGI(TAG, "pushedBtnLong %d", pushedBtnLong);
-//     ESP_LOGI(TAG, "waitedMS %d", waitedMS);
-//     ESP_LOGI(TAG, "buttonLongPressInited %d", buttonLongPressInited);
-
-//     int a = iot_button_get_repeat((button_handle_t)arg);
-//     ESP_LOGI(TAG, "BUTTON_SINGLE_CLICKaaa %d", a);
-//     if(isBootModeMain() && completedFirstWait == 1 && singleClickAction != NULL){
-//       singleClickAction();
-//     }
-// }
 
 // static void button_long_press_cb(void *arg,void *usr_data){
 //     ESP_LOGI(TAG, "BUTTON_LONG_PRESS_START_1");
@@ -123,27 +141,26 @@ bool isButtonPressed(void){
 static void initButtonForKeyboard(void) {
 
 
-    const gpio_config_t boot_button_config = {
-        .pin_bit_mask = BIT64(gpioBtnNum),
-        .mode = GPIO_MODE_INPUT,
-        .intr_type = GPIO_INTR_DISABLE,
-        .pull_up_en = true,
-        .pull_down_en = false,
-    };
-    ESP_ERROR_CHECK(gpio_config(&boot_button_config));
+  const gpio_config_t boot_button_config = {
+      .pin_bit_mask = BIT64(gpioBtnNum),
+      .mode = GPIO_MODE_INPUT,
+      .intr_type = GPIO_INTR_DISABLE,
+      .pull_up_en = true,
+      .pull_down_en = false,
+  };
+  ESP_ERROR_CHECK(gpio_config(&boot_button_config));
 
-    ESP_LOGI(TAG, "USB initialization");
-    const tinyusb_config_t tusb_cfg = {
-        .device_descriptor = NULL,
-        .string_descriptor = hid_string_descriptor,
-        .string_descriptor_count = sizeof(hid_string_descriptor) / sizeof(hid_string_descriptor[0]),
-        .external_phy = false,
-        .configuration_descriptor = hid_configuration_descriptor,
-    };
+  ESP_LOGI(TAG, "USB initialization");
+  const tinyusb_config_t tusb_cfg = {
+      .device_descriptor = NULL,
+      .string_descriptor = hid_string_descriptor,
+      .string_descriptor_count = sizeof(hid_string_descriptor) / sizeof(hid_string_descriptor[0]),
+      .external_phy = false,
+      .configuration_descriptor = hid_configuration_descriptor,
+  };
 
-    ESP_ERROR_CHECK(tinyusb_driver_install(&tusb_cfg));
-    ESP_LOGI(TAG, "USB initialization DONE");
-
+  ESP_ERROR_CHECK(tinyusb_driver_install(&tusb_cfg));
+  ESP_LOGI(TAG, "USB initialization DONE");
 
 
   // create gpio button
@@ -152,7 +169,7 @@ static void initButtonForKeyboard(void) {
     // .long_press_ticks = CONFIG_BUTTON_LONG_PRESS_TIME_MS,
     // .long_press_ticks = CONFIG_BUTTON_LONG_PRESS_TIME_MS,
     // .short_press_ticks = CONFIG_BUTTON_SHORT_PRESS_TIME_MS,
-    .long_press_time = CONFIG_BUTTON_LONG_PRESS_TIME_MS,
+    .long_press_time = 1000,
     .short_press_time = CONFIG_BUTTON_SHORT_PRESS_TIME_MS,
     .gpio_button_config = {
         .gpio_num = gpioBtnNum,
@@ -165,8 +182,10 @@ static void initButtonForKeyboard(void) {
   if (gpio_btn == NULL) {
     ESP_LOGE(TAG, "Button create failed");
   }
-  iot_button_register_cb(gpio_btn, BUTTON_SINGLE_CLICK, button_km_cb,NULL);
-  // iot_button_register_cb(gpio_btn, BUTTON_SINGLE_CLICK, button_single_click_cb,NULL);
+  // iot_button_register_cb(gpio_btn, BUTTON_SINGLE_CLICK, button_km_cb,NULL);
+  iot_button_register_cb(gpio_btn, BUTTON_SINGLE_CLICK, button_single_click_cb,NULL);
+  iot_button_register_cb(gpio_btn, BUTTON_LONG_PRESS_START, button_long_cb,NULL);
+  iot_button_register_cb(gpio_btn, BUTTON_PRESS_UP, button_press_up_cb,NULL);
 }
 
 
