@@ -27,17 +27,29 @@ static void buttonAction3(){
 
 void setApp(){
     // write initialize for app
-    char * color = getSettingByKey("color");
-    setButtonColor(color);
-    ESP_LOGI(TAG, "Color: %s!", color);
-
-    singleClickAction = buttonAction1;
-    doubleClickAction = buttonAction2;
-    longPressedAction = buttonAction3;
+    // char * color = getSettingByKey("color");
+    // setButtonColor(color);
+    // ESP_LOGI(TAG, "Color: %s!", color);
 }
 
+
+
 void appInLoop(){
-    // write logic in loop
+  // write logic in loop
+
+  if(buttonIsLongPressed){
+
+    char str[12];
+    snprintf(str, sizeof(str), "%d", pressedCount);
+    usb_hid_print_string("long");
+    usb_hid_print_string(str);
+    if (pressedCount% 2 == 0 ) {
+      lightLed("purple");
+    }else{
+      lightLed("green");
+    }
+
+  }
 
   // if (tud_mounted()) {
   //     static bool send_hid_data = false;

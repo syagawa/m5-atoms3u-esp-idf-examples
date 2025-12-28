@@ -4,8 +4,8 @@
 #include "storage.h"
 
 int gpioBtnNum = 41;
-int bootmode = 0;// 0 Main Mode
-                 // 1. Settings Mode(USB Flash, Web, other)
+int waitingMS = 1000;
+
 int pushedBtnLong = 0;
 int waitedMS = 0;
 int buttonLongPressInited = 0;
@@ -16,33 +16,41 @@ float brightness_test = 1.0;
 char * defaultButtonColor = "red";
 char * buttonColor = "";
 
-int press_count = 0;
+int pressedCount = 0;
+bool buttonIsLongPressed = false;
+TickType_t lastIncrementTime = 0;
 
-void (*singleClickAction)(void);
-void (*doubleClickAction)(void);
-void (*longPressedAction)(void);
+static void startCount() {
+  buttonIsLongPressed = true;
+  lastIncrementTime = xTaskGetTickCount();
+  pressedCount = 1;
+}
+
+static void resetCount(){
+  buttonIsLongPressed = false;
+  pressedCount = 0;
+}
+
+static void checkAndIncrementCount() {
+  TickType_t current = xTaskGetTickCount();
+  if ((current - lastIncrementTime) >= pdMS_TO_TICKS(waitingMS)){
+    pressedCount++;
+    lastIncrementTime = xTaskGetTickCount();
+  }
+}
 
 static void button_long_cb(void *arg, void *data) {
-    press_count++;
-
-    ESP_LOGI(TAG, "button_long_cb %d", press_count);
-    char str[12];
-    snprintf(str, sizeof(str), "%d", press_count);
-    usb_hid_print_string("long");
-    usb_hid_print_string(str);
-    if (press_count% 2 == 0 ) {
-      lightLed("purple");
-    }else{
-      lightLed("green");
-    }
+  ESP_LOGI(TAG, "button_long_cb %d", pressedCount);
+  startCount();
 }
 
 static void button_press_up_cb(void *arg, void *data)
 {
-    ESP_LOGI(TAG, "button_press_up_cb");
-    lightLed("blue");
-    usb_hid_print_string("up");
-    // press_count = 0;
+  ESP_LOGI(TAG, "button_press_up_cb");
+  lightLed("blue");
+  usb_hid_print_string("up");
+  // press_count = 0;
+  resetCount();
 }
 
 static void button_single_click_cb(void *arg,void *usr_data)
@@ -169,7 +177,7 @@ static void initButtonForKeyboard(void) {
     // .long_press_ticks = CONFIG_BUTTON_LONG_PRESS_TIME_MS,
     // .long_press_ticks = CONFIG_BUTTON_LONG_PRESS_TIME_MS,
     // .short_press_ticks = CONFIG_BUTTON_SHORT_PRESS_TIME_MS,
-    .long_press_time = 1000,
+    .long_press_time = waitingMS,
     .short_press_time = CONFIG_BUTTON_SHORT_PRESS_TIME_MS,
     .gpio_button_config = {
         .gpio_num = gpioBtnNum,

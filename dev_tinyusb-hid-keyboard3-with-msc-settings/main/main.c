@@ -75,7 +75,9 @@ void enterMain(){
   // setApp();
   while(1){
     appInLoop();
-    vTaskDelay(1);
+    // vTaskDelay(1);
+    vTaskDelay(pdMS_TO_TICKS(20));
+
   }
 }
 
