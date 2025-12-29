@@ -163,18 +163,15 @@ cJSON * getSettings(){
   f = fopen(file_path, "r");
   if (f == NULL) {
     ESP_LOGE(TAG, "Failed to open file for reading");
-    // lightLed("green");
     return NULL;
   }
   
   char line[128];
   if(fgets(line, sizeof(line), f) == NULL){
     fclose(f);
-    // lightLed("red");
     return NULL;
   }
   fclose(f);
-  // lightLed("blue");
   // strip newline
   char *pos = strchr(line, '\n');
   if (pos) {
@@ -187,9 +184,6 @@ cJSON * getSettings(){
 
   ESP_LOGI(TAG, "json_str '%s'", str);
   cJSON * obj = cJSON_Parse(str);
-  if(obj == NULL){
-    // lightLed("purple");
-  }
   free(str);
 
   return obj;
@@ -276,7 +270,7 @@ void startSettingsMode(){
     ESP_LOGI(TAG, "Settings Mode is %s\n", settings_mode);
     
     if(strcmp("storage", settings_mode) == 0){
-      showColorWithBrightness("YELLOW", 0.1);
+      showColorWithBrightness("white", 0.1);
 
       ESP_LOGI(TAG, "USB Composite initialization");
       const tinyusb_config_t tusb_cfg = {
@@ -288,7 +282,6 @@ void startSettingsMode(){
         //   .configuration_descriptor = NULL,
           .configuration_descriptor = msc_configuration_descriptor,
       };
-      showColorWithBrightness("purple", 0.1);
       ESP_ERROR_CHECK(tinyusb_driver_install(&tusb_cfg));
 
       tinyusb_config_cdcacm_t acm_cfg = {
@@ -300,7 +293,6 @@ void startSettingsMode(){
           .callback_line_state_changed = NULL,
           .callback_line_coding_changed = NULL
       };
-      showColorWithBrightness("red", 0.1);
 
       ESP_ERROR_CHECK(tusb_cdc_acm_init(&acm_cfg));
       /* the second way to register a callback */
@@ -311,12 +303,6 @@ void startSettingsMode(){
 
       ESP_LOGI(TAG, "USB Composite initialization DONE");
 
-
-
-    }else if(strcmp("web", settings_mode) == 0){
-      showColorWithBrightness("BLUE", 0.1);
-    }else{
-      showColorWithBrightness("RED", 0.1);
     }
 
     cJSON_Delete(obj);

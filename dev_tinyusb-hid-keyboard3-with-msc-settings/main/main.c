@@ -50,7 +50,6 @@ int keyIndex = 0;
 char *keys[MaxLength];
 int array_keys_count = 0;
 const char *colors[] = {"RED", "BLUE", "MAGENTA", "GREEN", "PINK", "YELLOW", "SKYBLUE", "BROWN", "PURPLE"};
-// const char *colors[] = {"RED", "MAGENTA", "PINK", "YELLOW", "BROWN", "PURPLE"};
 const int colorsLength = sizeof(colors) / sizeof(colors[0]);
 int colorIndex = -1;
 
