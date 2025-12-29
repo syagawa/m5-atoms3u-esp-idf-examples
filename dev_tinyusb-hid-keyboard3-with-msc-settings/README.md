@@ -89,11 +89,15 @@ This example is based on tusb_composite_msc_serialdevice from the esp-idf framew
 
 ## erase rom
 ```bash
+
+# アプリやストレージを削除
+idf.py erase-flash
+
 # フラッシュロムのサイズを確認
 esptool.py --chip esp32s3 --port /dev/ttyACM0 flash_id
 
 # storageの 2MB-3MBを削除
-esptool.py --chip esp32s3 --port COM3 erase_region 0x110000 0x100000
+esptool.py --chip esp32s3 --port /dev/ttyACM0 erase_region 0x110000 0x100000
 
 # storageの 2MB以降を削除
 esptool.py --chip esp32s3 --port /dev/ttyACM0 erase_region 0x110000 0x6F0000
