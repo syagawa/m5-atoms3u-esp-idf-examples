@@ -43,6 +43,7 @@ char * buttonColor = "";
 #include "storage.h"
 // #include "app.h"
 
+
 // const char * initialDataStr = "{\"settings_mode\": \"storage\", \"color\": \"red\"}";
 const char * initialDataStr = "{\"settings_mode\": \"storage\", \"color\": \"red\", \"keys\": [\"sample\", \"aa\", \"t-t\"]}";
 const char * versionStr = "tinyusb-msc-settings-1.2.0";

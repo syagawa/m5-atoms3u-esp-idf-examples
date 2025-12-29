@@ -1,12 +1,14 @@
 #ifndef BUTTON_H
 #define BUTTON_H
 #include "iot_button.h"
-#include "storage.h"
+// #include "storage.h"
 
 
 void (*singleClickAction)(void);
 void (*pressUpAction)(void);
 void (*longPressedAction)(void);
+
+static const char *TAG_BUTTON = "example_main_button";
 
 
 
@@ -62,9 +64,9 @@ static void button_single_click_cb(void *arg,void *usr_data) {
 }
 
 
-static void setButtonColor(char * color) {
-  buttonColor = color;
-}
+// static void setButtonColor(char * color) {
+//   buttonColor = color;
+// }
 
 char * getButtonColor(){
   if(strcmp(buttonColor, "") != 0) {
@@ -77,7 +79,7 @@ char * getButtonColor(){
 
 
 bool isButtonPressed(void){
-  ESP_LOGI(TAG, "in isButtonPressed");
+  ESP_LOGI(TAG_BUTTON, "in isButtonPressed");
   return gpio_get_level(GPIOButtonNumber) == 0;
 }
 
@@ -95,7 +97,7 @@ static void initButtonForKeyboard(void) {
   };
   ESP_ERROR_CHECK(gpio_config(&boot_button_config));
 
-  ESP_LOGI(TAG, "USB initialization");
+  ESP_LOGI(TAG_BUTTON, "USB initialization");
   const tinyusb_config_t tusb_cfg = {
       .device_descriptor = NULL,
       .string_descriptor = hid_string_descriptor,
@@ -105,7 +107,7 @@ static void initButtonForKeyboard(void) {
   };
 
   ESP_ERROR_CHECK(tinyusb_driver_install(&tusb_cfg));
-  ESP_LOGI(TAG, "USB initialization DONE");
+  ESP_LOGI(TAG_BUTTON, "USB initialization DONE");
 
 
   // create gpio button
@@ -125,7 +127,7 @@ static void initButtonForKeyboard(void) {
   button_handle_t gpio_btn = iot_button_create(&gpio_btn_cfg);
 
   if (gpio_btn == NULL) {
-    ESP_LOGE(TAG, "Button create failed");
+    ESP_LOGE(TAG_BUTTON, "Button create failed");
   }
   // iot_button_register_cb(gpio_btn, BUTTON_SINGLE_CLICK, button_km_cb,NULL);
   iot_button_register_cb(gpio_btn, BUTTON_SINGLE_CLICK, button_single_click_cb,NULL);
